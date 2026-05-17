@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AutoTube SaaS Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <style>
+    :root {
+      --brand: #163352;
+      --accent: #efa621;
+      --bg: #f5f5f9;
+      --card: #fff;
+      --shadow: 0 2px 10px rgba(22,51,82,0.09);
+      --radius: 16px;
+      --header-font: "Poppins", Arial, sans-serif;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      font-family: 'Segoe UI', Arial, sans-serif;
+      color: #232323;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 470px;
+      margin: 0 auto;
+      padding: 20px 8px 40px;
+      min-height: 100vh;
+    }
+    .card {
+      background: var(--card);
+      box-shadow: var(--shadow);
+      border-radius: var(--radius);
+      margin-bottom: 22px;
+      padding: 22px;
+    }
+    .card h2 {
+      font-family: var(--header-font);
+      margin-top: 0;
+      color: var(--brand);
+      font-size: 1.3rem;
+    }
+    .btn {
+      background: var(--brand);
+      color: #fff !important;
+      border: none;
+      outline: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 1rem;
+      margin-top: 8px;
+      margin-bottom: 8px;
+      padding: 13px 24px;
+      display: inline-block;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(22,51,82,0.05);
+      transition: background .13s;
+    }
+    .btn:active { background: #0d2237; }
+    .input-group {
+      margin-bottom: 14px;
+      display: flex;
+      flex-direction: column;
+    }
+    .input-group label {
+      margin-bottom: 5px;
+      font-size: .98rem;
+      font-weight: 600;
+    }
+    .input-group input, .input-group select {
+      padding: 9px 12px;
+      border: 1px solid #d3d3df;
+      border-radius: 6px;
+      font-size: 1rem;
+      background: #fafbfc;
+    }
+    .row { display: flex; gap: 16px; }
+    .col { flex: 1; }
+    .switch-link {
+      color: var(--accent);
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: underline !important;
+      margin-top: 9px;
+      font-size: 1rem;
+      display: block;
+    }
+    .dashboard { }
+    .short-card {
+      padding: 12px 9px 7px 9px;
+      border-radius: 10px;
+      background: #fafdfe;
+      box-shadow: 0 1px 4px #bdd5e821;
+      margin-bottom: 11px;
+      font-size: .98rem;
+      position: relative;
+    }
+    .short-card strong { color: var(--brand);}
+    .short-card .date {
+      font-size: .88em;
+      color: #54688d;
+      font-style: italic;
+      position: absolute;
+      right: 15px; top: 10px;
+    }
+    .short-thumb {
+      width: 76px; height: 136px;
+      object-fit: cover;
+      float: left;
+      border-radius: 8px;
+      margin-right: 11px;
+      border: 2px solid var(--brand);
+      background: #ddd;
+    }
+    @media (max-width: 510px) {
+      .container { padding: 7.3vw 1vw 14vw; }
+      .card { padding: 5vw 3vw; }
+      .short-thumb { width: 28vw; height: 46vw; }
+    }
+    .logout-btn {
+      display: block;
+      margin-left: auto;
+      background: #eee;
+      color: #d92020;
+      font-size: .95em;
+      padding: 7px 17px;
+      border-radius: 7px;
+      font-weight: 600;
+      border: none;
+      margin-top: -13px;
+    }
+    .topbar {
+      background: var(--brand);
+      margin: -20px -8px 25px -8px;
+      padding: 16px 16px 28px 14px;
+      border-radius: 0 0 var(--radius) var(--radius);
+      color: #fff;
+      font-family: var(--header-font);
+      font-size: 1.17em;
+      text-align: left;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      position: sticky;
+      top: 0; z-index: 4;
+      box-shadow: 0 1px 6px #2225a209;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-circle {
+      width: 39px; height: 39px; line-height: 41px;
+      background: #efa621;
+      color: #fff;
+      border-radius: 50%;
+      display: inline-block;
+      text-align: center;
+      font-size: 2rem;
+      font-weight: 900;
+      border: 2.5px solid #fff8;
+      box-shadow: 0 1px 9px #f6b90f3a;
+    }
+    .status {
+      font-size: .98em;
+      margin: 5px 0 11px 0;
+      color: #26a747;
+      font-weight: 600;
+    }
+    .error {
+      color: #b51c1c;
+      padding: 7px 0;
+      font-weight: 600;
+      background: #faeaeb;
+      border-radius: 7px;
+      text-align: center;
+    }
+    .success {
+      color: #267a16;
+      background: #e9fadf;
+      border-radius: 7px;
+      padding: 7px 0;
+      text-align: center;
+      font-weight: 600;
+    }
+    .center { text-align:center; }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="logo-circle">⏫</div> AutoTube SaaS
+    <button class="logout-btn" id="logoutBtn" style="display:none;margin-left:auto;">Log Out</button>
+  </div>
+  <div class="container" id="app"></div>
+  <script>
+    // ==== CONFIG ====
+    const API_BASE = 'https://autotube-kajc.onrender.com';
+
+    // ==== STATE ====
+    let token = localStorage.getItem('token') || '';
+    let user = null, themes = [], niches = [];
+
+    // ==== SIMPLE RENDER HELPERS ====
+    function el(html) { 
+      const t = document.createElement('template');
+      t.innerHTML = html.trim();
+      return t.content.firstChild;
+    }
+    function setStatus(msg, isErr=false) {
+      const stat = document.getElementById('status');
+      if (!stat) return;
+      stat.innerHTML = msg ? (isErr ? `<div class="error">${msg}</div>` : `<div class="success">${msg}</div>`) : '';
+    }
+    function show(view) { document.getElementById('app').innerHTML = view; }
+
+    // ==== API HELPERS ====
+    async function api(method, path, body = null, auth = true) {
+      setStatus("", false);
+      let opt = { method, headers: { 'Content-Type': 'application/json' } };
+      if (auth && token) opt.headers['Authorization'] = 'Bearer ' + token;
+      if (body) opt.body = JSON.stringify(body);
+
+      let resp = await fetch(API_BASE + path, opt);
+      let data = {};
+      try { data = await resp.json(); } catch{}
+      if (resp.status >= 400) throw new Error(data.msg || 'Error');
+      return data;
+    }
+
+    // ==== FORMS & VIEWS ====
+
+    function loginView() {
+      show(`
+        <div class="card center">
+          <h2>Sign In</h2>
+          <div id="status"></div>
+          <form id="loginForm">
+            <div class="input-group"><label>Email</label><input type="email" name="email" required></div>
+            <div class="input-group"><label>Password</label><input type="password" name="password" required></div>
+            <button class="btn" type="submit">Login</button>
+          </form>
+          <a class="switch-link" id="goSignup">No account? Sign Up</a>
+        </div>
+      `);
+      document.getElementById('goSignup').onclick = signupView;
+      document.getElementById('loginForm').onsubmit = async (e) => {
+        e.preventDefault();
+        setStatus("Logging in...");
+        try {
+          let fd = new FormData(e.target);
+          let data = await api('POST','/api/login',{ 
+            email: fd.get('email'), password: fd.get('password')
+          }, false);
+          token = data.token; localStorage.setItem('token', token);
+          loadUser();
+        } catch(err) { setStatus(err.message, true); }
+      }
+    }
+
+    function signupView() {
+      show(`
+        <div class="card center">
+          <h2>Sign Up</h2>
+          <div id="status"></div>
+          <form id="signupForm">
+            <div class="input-group"><label>Name</label><input name="name" required></div>
+            <div class="input-group"><label>Email</label><input type="email" name="email" required></div>
+            <div class="input-group"><label>Password</label><input type="password" name="password" required></div>
+            <button class="btn" type="submit">Create Account</button>
+          </form>
+          <a class="switch-link" id="goLogin">Back to Login</a>
+        </div>
+      `);
+      document.getElementById('goLogin').onclick = loginView;
+      document.getElementById('signupForm').onsubmit = async (e) => {
+        e.preventDefault();
+        setStatus("Creating account...");
+        try {
+          let fd = new FormData(e.target);
+          let data = await api('POST','/api/signup',{
+            name: fd.get('name'),
+            email: fd.get('email'),
+            password: fd.get('password')
+          }, false);
+          token = data.token; localStorage.setItem('token', token);
+          loadUser();
+        } catch(err) { setStatus(err.message, true); }
+      }
+    }
+
+    function prefsView() {
+      let pref = user.preferences || {};
+      let themeList = themes.map(t => `<option value="${t}" ${pref.theme===t?'selected':''}>${t}</option>`).join('');
+      let nicheList = niches.map(n => `<option value="${n}" ${pref.niche===n?'selected':''}>${n}</option>`).join('');
+      show(`
+        <div class="card">
+          <h2>Preferences</h2>
+          <div id="status"></div>
+          <form id="prefsForm">
+            <div class="input-group">
+              <label>Niche</label>
+              <select name="niche" required>${nicheList}</select>
+            </div>
+            <div class="input-group">
+              <label>Theme</label>
+              <select name="theme" required>${themeList}</select>
+            </div>
+            <div class="input-group">
+              <label>Shorts Per Day</label>
+              <input type="number" name="uploadCount" min="1" max="10" value="${pref.uploadCount||1}" required>
+            </div>
+            <div class="input-group">
+              <label>Times to Upload (comma separated, e.g. 09:00,18:00)</label>
+              <input name="uploadTimes" value="${(pref.uploadTimes||[]).join(',')}" placeholder="09:00,21:00">
+            </div>
+            <button class="btn" type="submit">Save Preferences</button>
+          </form>
+        </div>
+        <div class="card center">
+          <button class="btn" id="goDashBtn">See My Dashboard</button>
+        </div>
+      `);
+      document.getElementById('prefsForm').onsubmit = async (e) => {
+        e.preventDefault();
+        setStatus("Saving...");
+        let fd = new FormData(e.target);
+        let data = {
+          niche: fd.get('niche'),
+          theme: fd.get('theme'),
+          uploadCount: Number(fd.get('uploadCount') || 1),
+          uploadTimes: (fd.get('uploadTimes')||'').split(',').map(s=>s.trim()).filter(Boolean)
+        };
+        try {
+          await api('POST','/api/preferences', data);
+          setStatus("Preferences saved!", false);
+          await loadUser(true);
+        } catch(err) { setStatus(err.message, true); }
+      };
+      document.getElementById('goDashBtn').onclick = dashboardView;
+    }
+
+    function dashboardView() {
+      show(`
+        <div class="card center">
+          <h2>My Dashboard</h2>
+          <div id="status"></div>
+          <button class="btn" id="goPrefsBtn" style="margin-bottom:7px;">Update Preferences</button>
+          <button class="btn" id="newShortBtn" style="margin-bottom:7px;background:var(--accent);color:#212;">Schedule New Short</button>
+        </div>
+        <div id="shortsCont"></div>
+      `);
+      document.getElementById('goPrefsBtn').onclick = prefsView;
+      document.getElementById('newShortBtn').onclick = async () => {
+        setStatus("Scheduling...");
+        try {
+          await api('POST','/api/schedule');
+          setStatus("Short scheduled! You will see it in your list shortly.", false);
+          loadShorts();
+        } catch(e) {
+          setStatus(e.message, true);
+        }
+      };
+      loadShorts();
+    }
+
+    async function loadUser(isSilent) {
+      try {
+        let data = await api('GET', '/api/me');
+        user = data.user;
+        // Load templates (themes/niches) only once
+        if (!themes.length || !niches.length) {
+          let t = await api('GET', '/api/templates', null, false);
+          themes = t.themes; niches = t.niches;
+        }
+        document.getElementById('logoutBtn').style.display = 'block';
+        if (!isSilent) dashboardView();
+      } catch(e) {
+        token = ''; localStorage.removeItem('token');
+        document.getElementById('logoutBtn').style.display = 'none';
+        loginView();
+      }
+    }
+
+    // Load user shorts, render dashboard list
+    async function loadShorts() {
+      try {
+        let d = await api('GET','/api/my-shorts');
+        let html = '';
+        if (!d.shorts || !d.shorts.length)
+          html = `<div class="card center">No Shorts yet! Schedule one now.</div>`;
+        else html = d.shorts.map(s => `
+          <div class="short-card">
+            <img class="short-thumb" src="${s.thumbUrl || ''}" alt="">
+            <div>
+              <strong>${s.topic||''}</strong><br>
+              <span>${s.quote||''}</span>
+              <span class="date">${s.status === "done" && s.uploadedAt ? 
+                `Uploaded ${new Date(s.uploadedAt).toLocaleString()}` :
+                s.status === "pending" ? "Pending" : "Failed"
+              }</span>
+            </div>
+          </div>
+        `).join('');
+        document.getElementById('shortsCont').innerHTML = html;
+      } catch(e) {
+        document.getElementById('shortsCont').innerHTML = `<div class="error">${e.message}</div>`;
+      }
+    }
+
+    // ==== LOGOUT ====
+    document.getElementById('logoutBtn').onclick = () => {
+      token = ''; localStorage.removeItem('token');
+      user = null;
+      document.getElementById('logoutBtn').style.display = 'none';
+      loginView();
+    }
+
+    // ==== LOAD FIRST VIEW ====
+    window.onload = () => { token ? loadUser() : loginView(); };
+  </script>
+</body>
+</html>
