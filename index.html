@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <title>AutoTube SaaS Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-
   <style>
     :root {
       --brand: #163352;
@@ -16,59 +15,40 @@
       --header-font: "Poppins", Arial, sans-serif;
     }
     body {
-      margin: 0; padding: 0;
-      background: var(--bg);
+      margin: 0; padding: 0; background: var(--bg);
       font-family: 'Segoe UI', Arial, sans-serif;
       color: #21222c;
       min-height: 100vh;
     }
     .container {
-      max-width: 470px;
-      margin: 0 auto;
-      padding: 20px 8px 40px;
-      min-height: 100vh;
+      max-width: 470px; margin: 0 auto;
+      padding: 20px 8px 40px; min-height: 100vh;
     }
     .card {
-      background: var(--card);
-      box-shadow: var(--shadow);
-      border-radius: var(--radius);
-      margin-bottom: 22px;
-      padding: 22px;
+      background: var(--card); box-shadow: var(--shadow);
+      border-radius: var(--radius); margin-bottom: 22px; padding: 22px;
     }
     .card h2 {
-      font-family: var(--header-font);
-      margin-top: 0;
-      color: var(--brand);
-      font-size: 1.25rem;
+      font-family: var(--header-font); margin-top: 0;
+      color: var(--brand); font-size: 1.25rem;
     }
     .btn {
-      background: var(--brand);
-      color: #fff !important;
-      border: none;
-      border-radius: 8px;
-      font-weight: 600;
-      font-size: 1rem;
-      margin-top: 8px;
-      margin-bottom: 8px;
-      padding: 13px 24px;
-      cursor: pointer;
-      box-shadow: 0 2px 8px rgba(22,51,82,0.07);
-      transition: background .13s;
-      outline: none;
+      background: var(--brand); color: #fff !important; border: none;
+      border-radius: 8px; font-weight: 600; font-size: 1rem;
+      margin-top: 8px; margin-bottom: 8px; padding: 13px 24px;
+      cursor: pointer; box-shadow: 0 2px 8px rgba(22,51,82,0.07);
+      transition: background .13s; outline: none;
     }
     .btn:active { background: #0d2237; }
     .btn-secondary {
-      background: var(--accent);
-      color: #232 !important;
+      background: var(--accent); color: #232 !important;
     }
     .btn-danger {
-      background: #e74b47;
-      color: #fff !important;
+      background: #e74b47; color: #fff !important;
     }
     .input-group {
       margin-bottom: 14px;
-      display: flex;
-      flex-direction: column;
+      display: flex; flex-direction: column;
     }
     .input-group label {
       margin-bottom: 5px;
@@ -76,11 +56,8 @@
       font-weight: 600;
     }
     .input-group input, .input-group select {
-      padding: 9px 12px;
-      border: 1px solid #d5d6df;
-      border-radius: 6px;
-      font-size: 1rem;
-      background: #fafbfc;
+      padding: 9px 12px; border: 1px solid #d5d6df;
+      border-radius: 6px; font-size: 1rem; background: #fafbfc;
     }
     .switch-link {
       color: var(--accent);
@@ -94,8 +71,7 @@
     .dashboard { }
     .short-card {
       padding: 12px 9px 8px 9px;
-      border-radius: 10px;
-      background: #fafdfe;
+      border-radius: 10px; background: #fafdfe;
       box-shadow: 0 1px 4px #bdd5e821;
       margin-bottom: 11px;
       font-size: .98rem;
@@ -106,27 +82,19 @@
     }
     .short-card strong { color: var(--brand);}
     .short-card .date {
-      font-size: .88em;
-      color: #54688d;
-      font-style: italic;
-      margin-top: 7px;
-      display: block;
+      font-size: .88em; color: #54688d;
+      font-style: italic; margin-top: 7px; display: block;
     }
     .short-thumb {
       width: 52px; height: 90px;
       object-fit: cover;
-      border-radius: 8px;
-      border: 2px solid var(--brand);
-      background: #eee;
-      flex-shrink: 0;
+      border-radius: 8px; border: 2px solid var(--brand);
+      background: #eee; flex-shrink: 0;
     }
     .short-card .job-error {
-      color: #b51c1c;
-      font-size: .92em;
-      background: #faeaeb;
-      padding: 4px 7px;
-      border-radius: 6px;
-      margin-top: 6px;
+      color: #b51c1c; font-size: .92em;
+      background: #faeaeb; padding: 4px 7px;
+      border-radius: 6px; margin-top: 6px;
     }
     @media (max-width: 510px) {
       .container { padding: 4vw 1vw 14vw; }
@@ -134,74 +102,48 @@
       .short-thumb { width: 22vw; height: 37vw; }
     }
     .logout-btn {
-      background: #eee;
-      color: #d92020 !important;
-      font-size: .97em;
-      padding: 6px 15px;
-      border-radius: 7px;
-      font-weight: 600;
-      border: none;
-      margin-left: auto;
-      margin-top: -15px;
-      margin-bottom: 0;
-      box-shadow:none;
+      background: #eee; color: #d92020 !important;
+      font-size: .97em; padding: 6px 15px;
+      border-radius: 7px; font-weight: 600; border: none;
+      margin-left: auto; margin-top: -15px;
+      margin-bottom: 0; box-shadow:none;
     }
     .yt-chip {
-      display: inline-block;
-      border-radius: 13px;
-      font-size: .97em;
-      background: #e6ecec;
+      display: inline-block; border-radius: 13px;
+      font-size: .97em; background: #e6ecec;
       padding: 4px 10px 4px 5px;
       margin: 3px 7px 3px 0;
-      color: #ed1818;
-      font-weight: bold;
+      color: #ed1818; font-weight: bold;
       border: 1.7px solid #ed1818;
       box-shadow: 0 1px 3px #ed181844;
-      vertical-align: middle;
-      cursor: pointer;
+      vertical-align: middle; cursor: pointer;
       transition: background 0.15s;
     }
     .yt-chip.selected {
       background: #ff464a !important;
-      color: #fff;
-      border-color: #ba0d15;
+      color: #fff; border-color: #ba0d15;
     }
     .yt-chip img {
-      width: 18px; height: 18px; border-radius: 100px; vertical-align: middle; margin-right:5px;
+      width: 18px; height: 18px; border-radius: 100px;
+      vertical-align: middle; margin-right:5px;
     }
     .yt-chip .disconnect {
-      background: #ffbaba;
-      color: #333;
-      border: none;
-      border-radius: 8px;
-      margin-left: 5px;
-      padding: 0 7px;
-      font-size: .92em;
-      cursor:pointer;
-      font-weight: 400;
-      outline: none;
+      background: #ffbaba; color: #333; border: none;
+      border-radius: 8px; margin-left: 5px;
+      padding: 0 7px; font-size: .92em;
+      cursor:pointer; font-weight: 400; outline: none;
     }
     .status {
-      font-size: .98em;
-      margin: 5px 0 11px 0;
-      color: #26a747;
-      font-weight: 600;
+      font-size: .98em; margin: 5px 0 11px 0;
+      color: #26a747; font-weight: 600;
     }
     .error {
-      color: #b51c1c;
-      padding: 7px 0;
-      font-weight: 600;
-      background: #faeaeb;
-      border-radius: 7px;
-      text-align: center;
+      color: #b51c1c; padding: 7px 0; font-weight: 600;
+      background: #faeaeb; border-radius: 7px; text-align: center;
     }
     .success {
-      color: #267a16;
-      background: #e9fadf;
-      border-radius: 7px;
-      padding: 7px 0;
-      text-align: center;
-      font-weight: 600;
+      color: #267a16; background: #e9fadf; border-radius: 7px;
+      padding: 7px 0; text-align: center; font-weight: 600;
     }
     .center { text-align:center; }
     .topbar {
@@ -218,19 +160,13 @@
       position: sticky;
       top: 0; z-index: 4;
       box-shadow: 0 1px 6px #2225a209;
-      display: flex;
-      align-items: center;
-      gap: 12px;
+      display: flex; align-items: center; gap: 12px;
     }
     .logo-circle {
       width: 39px; height: 39px; line-height: 41px;
-      background: #efa621;
-      color: #fff;
-      border-radius: 50%;
-      display: inline-block;
-      text-align: center;
-      font-size: 2rem;
-      font-weight: 900;
+      background: #efa621; color: #fff; border-radius: 50%;
+      display: inline-block; text-align: center;
+      font-size: 2rem; font-weight: 900;
       border: 2.5px solid #fff8;
       box-shadow: 0 1px 9px #f6b90f3a;
     }
@@ -425,13 +361,13 @@
       ytLoading = true; ytAccountsView();
       try {
         let d = await api('GET','/api/youtube/connect');
-        window.location = d.url; // Google OAuth page (redirect)
+        window.location = d.url;
       } catch(e) { ytLoading=false; setStatus(e.message,true); }
     }
-    // Called on /oauth/google-callback page, GET param ?code=___
+    // Called on /oauth/google-callback page, GET param ?code=...
     async function handleYTCodeConnect() {
       const code = new URLSearchParams(window.location.search).get('code');
-      if(!code) return dashboardView();
+      if(!code) { dashboardView(); return; }
       show(`<div class="card center"><h2>Connecting YouTube...</h2><div id="status"></div></div>`);
       try {
         await api('POST','/api/youtube/callback', { code });
@@ -525,16 +461,18 @@
       loginView();
     }
 
-    // ==== Magic: detect OAuth callback ====
-    window.onload = () => {
-      // If we are at /oauth/google-callback?code=XXX, handle the YouTube connect
+    // Handle all navigation as SPA (for Vercel rewrite)
+    function route() {
       if (window.location.pathname === '/oauth/google-callback') {
         handleYTCodeConnect();
       } else {
         token ? loadUser() : loginView();
       }
-      setTimeout(()=>window.scrollTo(0,1), 300);
-    };
+      setTimeout(()=>window.scrollTo(0,1),300);
+    }
+
+    window.onpopstate = route;
+    window.onload = route;
   </script>
 </body>
 </html>
