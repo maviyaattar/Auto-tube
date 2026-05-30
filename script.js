@@ -6,22 +6,50 @@ const API =
 let token =
 localStorage.getItem('token') || ''
 
-// ====================================
+// ======================================
 // START
-// ====================================
+// ======================================
 
-if(token){
+window.onload = async ()=>{
 
-  showApp()
+  if(token){
 
-  loadDashboard()
+    showApp()
 
-  handleOAuth()
+    await handleOAuth()
+
+    await loadDashboard()
+  }
 }
 
-// ====================================
+// ======================================
 // HELPERS
-// ====================================
+// ======================================
+
+function showLoader(){
+
+  document
+  .getElementById('loader')
+  .classList.remove('hidden')
+}
+
+function hideLoader(){
+
+  document
+  .getElementById('loader')
+  .classList.add('hidden')
+}
+
+function showApp(){
+
+  document
+  .getElementById('authScreen')
+  .classList.add('hidden')
+
+  document
+  .getElementById('app')
+  .classList.remove('hidden')
+}
 
 function headers(){
 
@@ -39,49 +67,80 @@ async function api(
   options={}
 ){
 
-  const res =
-  await fetch(
-    API + url,
-    options
-  )
+  try{
 
-  const data =
-  await res.json()
+    showLoader()
 
-  if(!res.ok){
+    const res =
+    await fetch(
+      API + url,
+      options
+    )
+
+    const data =
+    await res.json()
+
+    hideLoader()
+
+    if(!res.ok){
+
+      alert(
+        data.msg || 'Error'
+      )
+
+      throw new Error(
+        data.msg
+      )
+    }
+
+    return data
+
+  }catch(err){
+
+    hideLoader()
+
+    console.log(err)
 
     alert(
-      data.msg || 'Error'
-    )
-
-    throw new Error(
-      data.msg
+      err.message ||
+      'Something went wrong'
     )
   }
-
-  return data
 }
 
-// ====================================
+// ======================================
 // AUTH
-// ====================================
+// ======================================
 
 async function signup(){
 
   const name =
-  document.getElementById(
-    'name'
-  ).value
+  document
+  .getElementById('name')
+  .value
+  .trim()
 
   const email =
-  document.getElementById(
-    'email'
-  ).value
+  document
+  .getElementById('email')
+  .value
+  .trim()
 
   const password =
-  document.getElementById(
-    'password'
-  ).value
+  document
+  .getElementById('password')
+  .value
+  .trim()
+
+  if(
+    !name ||
+    !email ||
+    !password
+  ){
+    return alert(
+      'Fill all fields'
+    )
+  }
 
   const data =
   await api(
@@ -105,6 +164,8 @@ async function signup(){
     }
   )
 
+  if(!data) return
+
   token = data.token
 
   localStorage.setItem(
@@ -120,14 +181,25 @@ async function signup(){
 async function login(){
 
   const email =
-  document.getElementById(
-    'email'
-  ).value
+  document
+  .getElementById('email')
+  .value
+  .trim()
 
   const password =
-  document.getElementById(
-    'password'
-  ).value
+  document
+  .getElementById('password')
+  .value
+  .trim()
+
+  if(
+    !email ||
+    !password
+  ){
+    return alert(
+      'Fill all fields'
+    )
+  }
 
   const data =
   await api(
@@ -150,6 +222,8 @@ async function login(){
     }
   )
 
+  if(!data) return
+
   token = data.token
 
   localStorage.setItem(
@@ -171,20 +245,9 @@ function logout(){
   location.reload()
 }
 
-function showApp(){
-
-  document
-  .getElementById('authScreen')
-  .classList.add('hidden')
-
-  document
-  .getElementById('app')
-  .classList.remove('hidden')
-}
-
-// ====================================
+// ======================================
 // YOUTUBE CONNECT
-// ====================================
+// ======================================
 
 async function connectYouTube(){
 
@@ -199,13 +262,16 @@ async function connectYouTube(){
     }
   )
 
-  window.location.href =
-  data.url
+  if(data?.url){
+
+    window.location.href =
+    data.url
+  }
 }
 
-// ====================================
+// ======================================
 // OAUTH CALLBACK
-// ====================================
+// ======================================
 
 async function handleOAuth(){
 
@@ -241,13 +307,11 @@ async function handleOAuth(){
     document.title,
     '/'
   )
-
-  loadDashboard()
 }
 
-// ====================================
+// ======================================
 // DASHBOARD
-// ====================================
+// ======================================
 
 async function loadDashboard(){
 
@@ -273,6 +337,9 @@ async function loadDashboard(){
     }
   )
 
+  if(!channelsRes || !projectsRes)
+  return
+
   renderChannels(
     channelsRes.channels
   )
@@ -281,14 +348,14 @@ async function loadDashboard(){
     projectsRes.projects
   )
 
-  fillProjectChannels(
+  fillChannelSelect(
     channelsRes.channels
   )
 }
 
-// ====================================
-// CHANNELS
-// ====================================
+// ======================================
+// RENDER CHANNELS
+// ======================================
 
 function renderChannels(
   channels
@@ -300,6 +367,14 @@ function renderChannels(
   )
 
   grid.innerHTML = ''
+
+  if(!channels.length){
+
+    grid.innerHTML =
+    '<p>No channels connected</p>'
+
+    return
+  }
 
   channels.forEach(channel=>{
 
@@ -314,7 +389,7 @@ function renderChannels(
       </h3>
 
       <p>
-        ${channel.channelId}
+        ${channel.email}
       </p>
 
     </div>
@@ -323,9 +398,9 @@ function renderChannels(
   })
 }
 
-// ====================================
-// PROJECTS
-// ====================================
+// ======================================
+// RENDER PROJECTS
+// ======================================
 
 function renderProjects(
   projects
@@ -337,6 +412,14 @@ function renderProjects(
   )
 
   grid.innerHTML = ''
+
+  if(!projects.length){
+
+    grid.innerHTML =
+    '<p>No projects created</p>'
+
+    return
+  }
 
   projects.forEach(project=>{
 
@@ -355,12 +438,18 @@ function renderProjects(
       </h3>
 
       <p>
+        Niche:
         ${project.niche}
       </p>
 
       <p>
         Theme:
         ${project.theme}
+      </p>
+
+      <p>
+        Privacy:
+        ${project.privacy}
       </p>
 
       <p>
@@ -374,11 +463,11 @@ function renderProjects(
   })
 }
 
-// ====================================
+// ======================================
 // MODAL
-// ====================================
+// ======================================
 
-function openProjectModal(){
+function openModal(){
 
   document
   .getElementById(
@@ -387,7 +476,7 @@ function openProjectModal(){
   .classList.remove('hidden')
 }
 
-function closeProjectModal(){
+function closeModal(){
 
   document
   .getElementById(
@@ -396,11 +485,11 @@ function closeProjectModal(){
   .classList.add('hidden')
 }
 
-// ====================================
-// FILL CHANNELS
-// ====================================
+// ======================================
+// CHANNEL SELECT
+// ======================================
 
-function fillProjectChannels(
+function fillChannelSelect(
   channels
 ){
 
@@ -425,44 +514,66 @@ function fillProjectChannels(
   })
 }
 
-// ====================================
+// ======================================
 // CREATE PROJECT
-// ====================================
+// ======================================
 
 async function createProject(){
 
   const name =
-  document.getElementById(
+  document
+  .getElementById(
     'projectName'
-  ).value
+  )
+  .value
+  .trim()
 
   const niche =
-  document.getElementById(
+  document
+  .getElementById(
     'projectNiche'
-  ).value
+  )
+  .value
 
   const theme =
-  document.getElementById(
+  document
+  .getElementById(
     'projectTheme'
-  ).value
+  )
+  .value
 
   const privacy =
-  document.getElementById(
+  document
+  .getElementById(
     'projectPrivacy'
-  ).value
+  )
+  .value
 
   const channelId =
-  document.getElementById(
+  document
+  .getElementById(
     'projectChannel'
-  ).value
+  )
+  .value
 
   const topics =
-  document.getElementById(
+  document
+  .getElementById(
     'projectTopics'
   )
   .value
   .split(',')
   .map(v=>v.trim())
+  .filter(Boolean)
+
+  if(
+    !name ||
+    !channelId
+  ){
+    return alert(
+      'Fill required fields'
+    )
+  }
 
   await api(
 
@@ -486,7 +597,7 @@ async function createProject(){
     }
   )
 
-  closeProjectModal()
+  closeModal()
 
   loadDashboard()
 }
