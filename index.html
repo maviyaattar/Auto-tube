@@ -1,478 +1,1510 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>AutoTube SaaS Dashboard</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <title>AutoTube AI</title>
+
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+  />
+
   <style>
-    :root {
-      --brand: #163352;
-      --accent: #efa621;
-      --bg: #f5f5f9;
-      --card: #fff;
-      --shadow: 0 2px 10px rgba(22,51,82,0.09);
-      --radius: 16px;
-      --header-font: "Poppins", Arial, sans-serif;
+
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family:Arial, Helvetica, sans-serif;
     }
-    body {
-      margin: 0; padding: 0; background: var(--bg);
-      font-family: 'Segoe UI', Arial, sans-serif;
-      color: #21222c;
-      min-height: 100vh;
+
+    :root{
+      --bg:#050816;
+      --card:#0f172a;
+      --card2:#111827;
+      --border:#ffffff14;
+      --text:#ffffff;
+      --muted:#94a3b8;
+      --purple:#7c3aed;
+      --cyan:#06b6d4;
+      --danger:#ff3b6b;
+      --success:#00d084;
+      --warning:#ffb020;
     }
-    .container {
-      max-width: 470px; margin: 0 auto;
-      padding: 20px 8px 40px; min-height: 100vh;
+
+    body{
+      background:
+      radial-gradient(circle at top left,#7c3aed22,transparent 25%),
+      radial-gradient(circle at bottom right,#06b6d422,transparent 25%),
+      var(--bg);
+
+      color:var(--text);
+      min-height:100vh;
+      overflow-x:hidden;
     }
-    .card {
-      background: var(--card); box-shadow: var(--shadow);
-      border-radius: var(--radius); margin-bottom: 22px; padding: 22px;
+
+    /* ========================= */
+    /* BACKGROUND PARTICLES */
+    /* ========================= */
+
+    .particles{
+      position:fixed;
+      inset:0;
+      overflow:hidden;
+      z-index:-1;
     }
-    .card h2 {
-      font-family: var(--header-font); margin-top: 0;
-      color: var(--brand); font-size: 1.25rem;
+
+    .particles span{
+      position:absolute;
+      width:3px;
+      height:3px;
+      background:#ffffff55;
+      border-radius:50%;
+      animation:float linear infinite;
     }
-    .btn {
-      background: var(--brand); color: #fff !important; border: none;
-      border-radius: 8px; font-weight: 600; font-size: 1rem;
-      margin-top: 8px; margin-bottom: 8px; padding: 13px 24px;
-      cursor: pointer; box-shadow: 0 2px 8px rgba(22,51,82,0.07);
-      transition: background .13s; outline: none;
+
+    @keyframes float{
+
+      from{
+        transform:translateY(100vh);
+      }
+
+      to{
+        transform:translateY(-10vh);
+      }
     }
-    .btn:active { background: #0d2237; }
-    .btn-secondary {
-      background: var(--accent); color: #232 !important;
+
+    /* ========================= */
+    /* APP */
+    /* ========================= */
+
+    .app{
+      width:100%;
+      min-height:100vh;
+      display:flex;
     }
-    .btn-danger {
-      background: #e74b47; color: #fff !important;
+
+    /* ========================= */
+    /* SIDEBAR */
+    /* ========================= */
+
+    .sidebar{
+      width:280px;
+      background:#0b1220;
+      border-right:1px solid var(--border);
+      padding:30px 20px;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
     }
-    .input-group {
-      margin-bottom: 14px;
-      display: flex; flex-direction: column;
+
+    .logo{
+      font-size:34px;
+      font-weight:bold;
+      background:
+      linear-gradient(
+        to right,
+        var(--purple),
+        var(--cyan)
+      );
+
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+
+      margin-bottom:40px;
     }
-    .input-group label {
-      margin-bottom: 5px;
-      font-size: .98rem;
-      font-weight: 600;
+
+    .menu{
+      display:flex;
+      flex-direction:column;
+      gap:14px;
     }
-    .input-group input, .input-group select {
-      padding: 9px 12px; border: 1px solid #d5d6df;
-      border-radius: 6px; font-size: 1rem; background: #fafbfc;
+
+    .menu button{
+      background:#ffffff08;
+      border:none;
+      color:white;
+      padding:16px;
+      border-radius:18px;
+      cursor:pointer;
+      text-align:left;
+      transition:0.3s;
+      font-size:15px;
     }
-    .switch-link {
-      color: var(--accent);
-      font-weight: 600;
-      cursor: pointer;
-      text-decoration: underline !important;
-      margin-top: 8px;
-      font-size: 1rem;
-      display: block;
+
+    .menu button:hover,
+    .menu .active{
+      background:
+      linear-gradient(
+        to right,
+        var(--purple),
+        var(--cyan)
+      );
+
+      transform:translateX(5px);
     }
-    .dashboard { }
-    .short-card {
-      padding: 12px 9px 8px 9px;
-      border-radius: 10px; background: #fafdfe;
-      box-shadow: 0 1px 4px #bdd5e821;
-      margin-bottom: 11px;
-      font-size: .98rem;
-      position: relative;
-      display: flex;
-      align-items: flex-start;
-      gap: 11px;
+
+    .logout{
+      background:#ff004c22;
+      border:none;
+      color:#ff7b9d;
+      padding:16px;
+      border-radius:18px;
+      cursor:pointer;
+      transition:0.3s;
     }
-    .short-card strong { color: var(--brand);}
-    .short-card .date {
-      font-size: .88em; color: #54688d;
-      font-style: italic; margin-top: 7px; display: block;
+
+    .logout:hover{
+      background:#ff004c55;
     }
-    .short-thumb {
-      width: 52px; height: 90px;
-      object-fit: cover;
-      border-radius: 8px; border: 2px solid var(--brand);
-      background: #eee; flex-shrink: 0;
+
+    /* ========================= */
+    /* MAIN */
+    /* ========================= */
+
+    .main{
+      flex:1;
+      padding:35px;
     }
-    .short-card .job-error {
-      color: #b51c1c; font-size: .92em;
-      background: #faeaeb; padding: 4px 7px;
-      border-radius: 6px; margin-top: 6px;
+
+    .topbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:20px;
+      flex-wrap:wrap;
+      margin-bottom:35px;
     }
-    @media (max-width: 510px) {
-      .container { padding: 4vw 1vw 14vw; }
-      .card { padding: 4vw 3vw; }
-      .short-thumb { width: 22vw; height: 37vw; }
+
+    .title h1{
+      font-size:42px;
+      margin-bottom:10px;
     }
-    .logout-btn {
-      background: #eee; color: #d92020 !important;
-      font-size: .97em; padding: 6px 15px;
-      border-radius: 7px; font-weight: 600; border: none;
-      margin-left: auto; margin-top: -15px;
-      margin-bottom: 0; box-shadow:none;
+
+    .title p{
+      color:var(--muted);
     }
-    .yt-chip {
-      display: inline-block; border-radius: 13px;
-      font-size: .97em; background: #e6ecec;
-      padding: 4px 10px 4px 5px;
-      margin: 3px 7px 3px 0;
-      color: #ed1818; font-weight: bold;
-      border: 1.7px solid #ed1818;
-      box-shadow: 0 1px 3px #ed181844;
-      vertical-align: middle; cursor: pointer;
-      transition: background 0.15s;
+
+    .connect-btn{
+      background:
+      linear-gradient(
+        to right,
+        var(--purple),
+        var(--cyan)
+      );
+
+      border:none;
+      color:white;
+      padding:16px 28px;
+      border-radius:18px;
+      cursor:pointer;
+      font-size:15px;
+      font-weight:bold;
+      transition:0.3s;
+      box-shadow:0 0 30px #7c3aed44;
     }
-    .yt-chip.selected {
-      background: #ff464a !important;
-      color: #fff; border-color: #ba0d15;
+
+    .connect-btn:hover{
+      transform:scale(1.05);
     }
-    .yt-chip img {
-      width: 18px; height: 18px; border-radius: 100px;
-      vertical-align: middle; margin-right:5px;
+
+    /* ========================= */
+    /* STATS */
+    /* ========================= */
+
+    .stats{
+      display:grid;
+      grid-template-columns:
+      repeat(auto-fit,minmax(220px,1fr));
+
+      gap:20px;
+      margin-bottom:40px;
     }
-    .yt-chip .disconnect {
-      background: #ffbaba; color: #333; border: none;
-      border-radius: 8px; margin-left: 5px;
-      padding: 0 7px; font-size: .92em;
-      cursor:pointer; font-weight: 400; outline: none;
+
+    .stat-card{
+      background:#ffffff08;
+      border:1px solid var(--border);
+      border-radius:25px;
+      padding:25px;
+      transition:0.3s;
+      position:relative;
+      overflow:hidden;
     }
-    .status {
-      font-size: .98em; margin: 5px 0 11px 0;
-      color: #26a747; font-weight: 600;
+
+    .stat-card::before{
+      content:'';
+      position:absolute;
+      width:140px;
+      height:140px;
+      background:#7c3aed22;
+      border-radius:50%;
+      top:-60px;
+      right:-60px;
     }
-    .error {
-      color: #b51c1c; padding: 7px 0; font-weight: 600;
-      background: #faeaeb; border-radius: 7px; text-align: center;
+
+    .stat-card:hover{
+      transform:translateY(-5px);
+      border-color:#7c3aed66;
+      box-shadow:0 0 40px #7c3aed22;
     }
-    .success {
-      color: #267a16; background: #e9fadf; border-radius: 7px;
-      padding: 7px 0; text-align: center; font-weight: 600;
+
+    .stat-card h2{
+      font-size:42px;
+      margin-bottom:10px;
     }
-    .center { text-align:center; }
-    .topbar {
-      background: var(--brand);
-      margin: -20px -8px 25px -8px;
-      padding: 16px 16px 28px 14px;
-      border-radius: 0 0 var(--radius) var(--radius);
-      color: #fff;
-      font-family: var(--header-font);
-      font-size: 1.17em;
-      text-align: left;
-      font-weight: 600;
-      letter-spacing: 0.01em;
-      position: sticky;
-      top: 0; z-index: 4;
-      box-shadow: 0 1px 6px #2225a209;
-      display: flex; align-items: center; gap: 12px;
+
+    .stat-card p{
+      color:var(--muted);
     }
-    .logo-circle {
-      width: 39px; height: 39px; line-height: 41px;
-      background: #efa621; color: #fff; border-radius: 50%;
-      display: inline-block; text-align: center;
-      font-size: 2rem; font-weight: 900;
-      border: 2.5px solid #fff8;
-      box-shadow: 0 1px 9px #f6b90f3a;
+
+    /* ========================= */
+    /* ACCOUNTS */
+    /* ========================= */
+
+    .section-title{
+      font-size:30px;
+      margin-bottom:25px;
     }
+
+    .accounts{
+      display:grid;
+      grid-template-columns:
+      repeat(auto-fit,minmax(320px,1fr));
+
+      gap:25px;
+    }
+
+    .account{
+      background:var(--card2);
+      border:1px solid var(--border);
+      border-radius:25px;
+      padding:25px;
+      transition:0.3s;
+    }
+
+    .account:hover{
+      transform:translateY(-5px);
+      border-color:#06b6d455;
+      box-shadow:0 0 35px #06b6d422;
+    }
+
+    .profile{
+      display:flex;
+      align-items:center;
+      gap:15px;
+      margin-bottom:20px;
+    }
+
+    .profile img{
+      width:70px;
+      height:70px;
+      border-radius:50%;
+      border:3px solid var(--cyan);
+      object-fit:cover;
+    }
+
+    .profile h3{
+      margin-bottom:6px;
+    }
+
+    .profile p{
+      color:var(--muted);
+      font-size:14px;
+    }
+
+    .badge{
+      display:inline-block;
+      background:#00ff8822;
+      color:#00ff88;
+      padding:8px 14px;
+      border-radius:50px;
+      font-size:13px;
+      margin-bottom:20px;
+    }
+
+    .actions{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
+    .switch-btn,
+    .disconnect-btn{
+      flex:1;
+      border:none;
+      padding:14px;
+      border-radius:16px;
+      cursor:pointer;
+      font-weight:bold;
+      transition:0.3s;
+    }
+
+    .switch-btn{
+      background:
+      linear-gradient(
+        to right,
+        var(--purple),
+        var(--cyan)
+      );
+
+      color:white;
+    }
+
+    .disconnect-btn{
+      background:#ff004c22;
+      color:#ff7b9d;
+    }
+
+    .switch-btn:hover,
+    .disconnect-btn:hover{
+      transform:scale(1.03);
+    }
+
+    /* ========================= */
+    /* AUTH SCREEN */
+    /* ========================= */
+
+    .auth-screen{
+      position:fixed;
+      inset:0;
+      background:#020617;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      z-index:999;
+      padding:20px;
+    }
+
+    .auth-box{
+      width:100%;
+      max-width:430px;
+      background:#0f172acc;
+      border:1px solid var(--border);
+      backdrop-filter:blur(20px);
+      padding:40px;
+      border-radius:30px;
+      box-shadow:0 0 50px #7c3aed22;
+    }
+
+    .auth-box h1{
+      text-align:center;
+      margin-bottom:10px;
+      font-size:40px;
+    }
+
+    .auth-box p{
+      text-align:center;
+      color:var(--muted);
+      margin-bottom:30px;
+    }
+
+    .input-box{
+      margin-bottom:18px;
+    }
+
+    .input-box input{
+      width:100%;
+      padding:16px;
+      border:none;
+      outline:none;
+      background:#ffffff08;
+      border-radius:16px;
+      color:white;
+      font-size:15px;
+    }
+
+    .auth-btn{
+      width:100%;
+      padding:16px;
+      border:none;
+      border-radius:16px;
+      background:
+      linear-gradient(
+        to right,
+        var(--purple),
+        var(--cyan)
+      );
+
+      color:white;
+      font-size:16px;
+      cursor:pointer;
+      margin-top:10px;
+      transition:0.3s;
+      font-weight:bold;
+    }
+
+    .auth-btn:hover{
+      transform:scale(1.02);
+    }
+
+    .toggle{
+      text-align:center;
+      margin-top:20px;
+      color:var(--muted);
+    }
+
+    .toggle span{
+      color:var(--cyan);
+      cursor:pointer;
+    }
+
+    /* ========================= */
+    /* LOADER */
+    /* ========================= */
+
+    .loader-screen{
+      position:fixed;
+      inset:0;
+      background:#00000088;
+      display:none;
+      justify-content:center;
+      align-items:center;
+      z-index:99999;
+    }
+
+    .loader{
+      width:70px;
+      height:70px;
+      border-radius:50%;
+      border:6px solid transparent;
+      border-top:6px solid var(--cyan);
+      border-right:6px solid var(--purple);
+      animation:spin 1s linear infinite;
+    }
+
+    @keyframes spin{
+
+      100%{
+        transform:rotate(360deg);
+      }
+    }
+
+    /* ========================= */
+    /* TOAST */
+    /* ========================= */
+
+    #toastBox{
+      position:fixed;
+      top:20px;
+      right:20px;
+      z-index:999999;
+      display:flex;
+      flex-direction:column;
+      gap:15px;
+    }
+
+    .toast{
+      min-width:280px;
+      padding:16px 18px;
+      border-radius:18px;
+      color:white;
+      font-weight:bold;
+      animation:slide 0.4s ease;
+      box-shadow:0 0 30px #00000055;
+      backdrop-filter:blur(20px);
+    }
+
+    .success{
+      background:#00ff8840;
+      border:1px solid #00ff88;
+    }
+
+    .error{
+      background:#ff004c40;
+      border:1px solid #ff4d79;
+    }
+
+    .warning{
+      background:#ffaa0040;
+      border:1px solid #ffaa00;
+    }
+
+    @keyframes slide{
+
+      from{
+        opacity:0;
+        transform:translateX(100%);
+      }
+
+      to{
+        opacity:1;
+        transform:translateX(0);
+      }
+    }
+
+    /* ========================= */
+    /* RESPONSIVE */
+    /* ========================= */
+
+    @media(max-width:900px){
+
+      .app{
+        flex-direction:column;
+      }
+
+      .sidebar{
+        width:100%;
+      }
+
+      .title h1{
+        font-size:32px;
+      }
+    }
+
   </style>
 </head>
+
 <body>
-  <div class="topbar">
-    <div class="logo-circle">⏫</div> AutoTube SaaS
-    <button class="logout-btn" id="logoutBtn" style="display:none;">Log Out</button>
+
+  <!-- PARTICLES -->
+  <div class="particles" id="particles"></div>
+
+  <!-- LOADER -->
+  <div class="loader-screen" id="loader">
+    <div class="loader"></div>
   </div>
-  <div class="container" id="app"></div>
+
+  <!-- TOAST -->
+  <div id="toastBox"></div>
+
+  <!-- AUTH -->
+  <div class="auth-screen" id="authScreen">
+
+    <div class="auth-box">
+
+      <h1 id="authTitle">
+        AutoTube AI
+      </h1>
+
+      <p>
+        Manage Multiple YouTube Channels
+      </p>
+
+      <div id="nameField">
+
+        <div class="input-box">
+          <input
+            type="text"
+            id="name"
+            placeholder="Full Name"
+          />
+        </div>
+
+      </div>
+
+      <div class="input-box">
+        <input
+          type="email"
+          id="email"
+          placeholder="Email"
+        />
+      </div>
+
+      <div class="input-box">
+        <input
+          type="password"
+          id="password"
+          placeholder="Password"
+        />
+      </div>
+
+      <button
+        class="auth-btn"
+        id="authBtn"
+      >
+        Create Account
+      </button>
+
+      <div class="toggle" id="toggleText">
+
+        Already have account?
+
+        <span onclick="toggleAuth()">
+          Login
+        </span>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- APP -->
+  <div class="app">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+
+      <div>
+
+        <div class="logo">
+          AutoTube
+        </div>
+
+        <div class="menu">
+
+          <button class="active">
+            <i class="fa-solid fa-house"></i>
+            Dashboard
+          </button>
+
+          <button>
+            <i class="fa-brands fa-youtube"></i>
+            Channels
+          </button>
+
+          <button>
+            <i class="fa-solid fa-gear"></i>
+            Settings
+          </button>
+
+        </div>
+
+      </div>
+
+      <button
+        class="logout"
+        onclick="logout()"
+      >
+        <i class="fa-solid fa-right-from-bracket"></i>
+        Logout
+      </button>
+
+    </div>
+
+    <!-- MAIN -->
+    <div class="main">
+
+      <div class="topbar">
+
+        <div class="title">
+
+          <h1>
+            Welcome Back 👋
+          </h1>
+
+          <p>
+            AI Powered YouTube Dashboard
+          </p>
+
+        </div>
+
+        <button
+          class="connect-btn"
+          onclick="connectYouTube()"
+        >
+          <i class="fa-brands fa-youtube"></i>
+          Connect YouTube
+        </button>
+
+      </div>
+
+      <!-- STATS -->
+      <div class="stats">
+
+        <div class="stat-card">
+          <h2 id="channelCount">0</h2>
+          <p>Connected Channels</p>
+        </div>
+
+        <div class="stat-card">
+          <h2>100%</h2>
+          <p>OAuth Ready</p>
+        </div>
+
+        <div class="stat-card">
+          <h2>AI</h2>
+          <p>Automation Enabled</p>
+        </div>
+
+      </div>
+
+      <!-- ACCOUNTS -->
+      <h2 class="section-title">
+        Connected Accounts
+      </h2>
+
+      <div
+        class="accounts"
+        id="accounts"
+      ></div>
+
+    </div>
+
+  </div>
+
   <script>
-    const API_BASE = 'https://autotube-kajc.onrender.com';
-    let token = localStorage.getItem('token') || '';
-    let user = null, themes = [], niches = [], ytConnected = false, ytLoading = false;
 
-    function setStatus(msg, isErr=false) {
-      const stat = document.getElementById('status');
-      if (stat) stat.innerHTML = msg
-        ? (isErr ? `<div class="error">${msg}</div>` : `<div class="success">${msg}</div>`)
-        : '';
+    // =========================
+    // CONFIG
+    // =========================
+
+    const API =
+    'http://localhost:4000/api'
+
+    let isLogin = false
+
+    // =========================
+    // PARTICLES
+    // =========================
+
+    const particles =
+    document.getElementById(
+      'particles'
+    )
+
+    for(let i=0;i<80;i++){
+
+      const span =
+      document.createElement('span')
+
+      span.style.left =
+      Math.random() * 100 + '%'
+
+      span.style.animationDuration =
+      (5 + Math.random() * 10) + 's'
+
+      span.style.opacity =
+      Math.random()
+
+      particles.appendChild(span)
     }
-    function show(view) { document.getElementById('app').innerHTML = view; }
 
-    async function api(method, path, body = null, auth = true) {
-      setStatus("", false);
-      let opt = { method, headers: { 'Content-Type': 'application/json' } };
-      if (auth && token) opt.headers['Authorization'] = 'Bearer ' + token;
-      if (body) opt.body = JSON.stringify(body);
-      let resp = await fetch(API_BASE + path, opt);
-      let data = {};
-      try { data = await resp.json(); } catch{}
-      if (resp.status >= 400) throw new Error(data.msg || 'Error');
-      return data;
+    // =========================
+    // TOAST
+    // =========================
+
+    function showToast(
+      message,
+      type='success'
+    ){
+
+      const toast =
+      document.createElement('div')
+
+      toast.className =
+      `toast ${type}`
+
+      toast.innerText = message
+
+      document
+      .getElementById('toastBox')
+      .appendChild(toast)
+
+      setTimeout(()=>{
+
+        toast.remove()
+
+      },3000)
     }
 
-    function loginView() {
-      show(`<div class="card center">
-        <h2>Sign In</h2>
-        <div id="status"></div>
-        <form id="loginForm">
-          <div class="input-group"><label>Email</label><input type="email" name="email" required></div>
-          <div class="input-group"><label>Password</label><input type="password" name="password" required></div>
-          <button class="btn" type="submit">Login</button>
-        </form>
-        <a class="switch-link" id="goSignup">No account? Sign Up</a>
-      </div>`);
-      document.getElementById('goSignup').onclick = signupView;
-      document.getElementById('loginForm').onsubmit = async (e) => {
-        e.preventDefault();
-        setStatus("Logging in...");
-        try {
-          let fd = new FormData(e.target);
-          let data = await api('POST','/api/login',{ 
-            email: fd.get('email'), password: fd.get('password')
-          }, false);
-          token = data.token; localStorage.setItem('token', token);
-          loadUser();
-        } catch(err) { setStatus(err.message, true); }
+    // =========================
+    // LOADER
+    // =========================
+
+    function showLoader(){
+
+      document.getElementById(
+        'loader'
+      ).style.display = 'flex'
+    }
+
+    function hideLoader(){
+
+      document.getElementById(
+        'loader'
+      ).style.display = 'none'
+    }
+
+    // =========================
+    // GLOBAL ERRORS
+    // =========================
+
+    window.addEventListener(
+      'error',
+      (e)=>{
+
+        console.error(e.error)
+
+        hideLoader()
+
+        showToast(
+          'Something went wrong!',
+          'error'
+        )
       }
-    }
+    )
 
-    function signupView() {
-      show(`<div class="card center">
-        <h2>Sign Up</h2>
-        <div id="status"></div>
-        <form id="signupForm">
-          <div class="input-group"><label>Name</label><input name="name" required></div>
-          <div class="input-group"><label>Email</label><input type="email" name="email" required></div>
-          <div class="input-group"><label>Password</label><input type="password" name="password" required></div>
-          <button class="btn" type="submit">Create Account</button>
-        </form>
-        <a class="switch-link" id="goLogin">Back to Login</a>
-      </div>`);
-      document.getElementById('goLogin').onclick = loginView;
-      document.getElementById('signupForm').onsubmit = async (e) => {
-        e.preventDefault();
-        setStatus("Creating account...");
-        try {
-          let fd = new FormData(e.target);
-          let data = await api('POST','/api/signup',{
-            name: fd.get('name'),
-            email: fd.get('email'),
-            password: fd.get('password')
-          }, false);
-          token = data.token; localStorage.setItem('token', token);
-          loadUser();
-        } catch(err) { setStatus(err.message, true); }
+    window.addEventListener(
+      'unhandledrejection',
+      (e)=>{
+
+        console.error(e.reason)
+
+        hideLoader()
+
+        showToast(
+          'Server Error!',
+          'error'
+        )
       }
-    }
+    )
 
-    async function prefsView() {
-      let pref = user.preferences || {};
-      let themeList = themes.map(t => `<option value="${t}" ${pref.theme===t?'selected':''}>${t}</option>`).join('');
-      let nicheList = niches.map(n => `<option value="${n}" ${pref.niche===n?'selected':''}>${n}</option>`).join('');
-      show(`<div class="card">
-        <h2>Preferences</h2>
-        <div id="status"></div>
-        <form id="prefsForm">
-          <div class="input-group">
-            <label>Niche</label>
-            <select name="niche" required>${nicheList}</select>
-          </div>
-          <div class="input-group">
-            <label>Theme</label>
-            <select name="theme" required>${themeList}</select>
-          </div>
-          <div class="input-group">
-            <label>Shorts Per Day</label>
-            <input type="number" name="uploadCount" min="1" max="10" value="${pref.uploadCount||1}" required>
-          </div>
-          <div class="input-group">
-            <label>Times to Upload (comma separated, e.g. 09:00,18:00)</label>
-            <input name="uploadTimes" value="${(pref.uploadTimes||[]).join(',')}" placeholder="09:00,21:00">
-          </div>
-          <button class="btn" type="submit">Save Preferences</button>
-        </form>
-      </div>
-      <div class="card center">
-        <button class="btn" id="goDashBtn">See My Dashboard</button>
-      </div>`);
-      document.getElementById('prefsForm').onsubmit = async (e) => {
-        e.preventDefault();
-        setStatus("Saving...");
-        let fd = new FormData(e.target);
-        let data = {
-          niche: fd.get('niche'),
-          theme: fd.get('theme'),
-          uploadCount: Number(fd.get('uploadCount') || 1),
-          uploadTimes: (fd.get('uploadTimes')||'').split(',').map(s=>s.trim()).filter(Boolean)
-        };
-        try {
-          await api('POST','/api/preferences', data);
-          setStatus("Preferences saved!", false);
-          await loadUser(true);
-        } catch(err) { setStatus(err.message, true); }
-      };
-      document.getElementById('goDashBtn').onclick = dashboardView;
-    }
+    // =========================
+    // INTERNET STATUS
+    // =========================
 
-    function ytAccountsView() {
-      let html = '';
-      let curr = user.selectedAccount || 0;
-      if (!user.ytAccounts || !user.ytAccounts.length) {
-        html = `<div style="margin-bottom:10px">No YouTube Channel Connected.</div>
-        <button class="btn" id="ytConnectBtn">${ytLoading ? "Connecting..." : "Connect YouTube"}</button>`;
-      } else {
-        html = user.ytAccounts.map((acc, i)=>`
-          <div class="yt-chip ${i==curr?'selected':''}" data-idx="${i}">
-            <img src="${acc.profileImg||''}" alt="">${acc.channelTitle}
-            <button class="disconnect" data-idx="${i}">X</button>
-            ${i==curr ? " (Active)" : ""}
-          </div>
-        `).join('') + `<button class="btn" id="ytConnectBtn" style="margin-left:1em">${ytLoading?"Connecting...":"Add More"}</button>`;
+    window.addEventListener(
+      'offline',
+      ()=>{
+
+        showToast(
+          'Internet disconnected',
+          'error'
+        )
       }
-      show(`<div class="card">
-        <h2>YouTube Channels</h2>
-        <div id="status"></div>
-        ${html}
-        <div style="margin-top:15px;margin-bottom:7px"><button class="btn" id="backBtn">Back</button></div>
-      </div>`);
-      // Switch or disconnect
-      document.querySelectorAll('.yt-chip').forEach(el=>{
-        el.onclick = ()=> {
-          let i = Number(el.dataset.idx);
-          if(i!==curr) switchYTAccount(i);
+    )
+
+    window.addEventListener(
+      'online',
+      ()=>{
+
+        showToast(
+          'Internet connected',
+          'success'
+        )
+      }
+    )
+
+    // =========================
+    // SAFE FETCH
+    // =========================
+
+    async function safeFetch(
+      url,
+      options={}
+    ){
+
+      try{
+
+        const res =
+        await fetch(url,options)
+
+        let data
+
+        try{
+
+          data = await res.json()
+
+        }catch{
+
+          throw new Error(
+            'Invalid server response'
+          )
         }
-        el.querySelector('.disconnect').onclick = (ev)=>{
-          ev.stopPropagation();
-          let i=Number(ev.target.dataset.idx);
-          if(confirm('Disconnect this YouTube channel?')) disconnectYTAccount(i);
+
+        if(!res.ok){
+
+          if(res.status === 401){
+
+            localStorage.removeItem(
+              'token'
+            )
+
+            document.getElementById(
+              'authScreen'
+            ).style.display='flex'
+          }
+
+          throw new Error(
+            data.msg ||
+            'Request failed'
+          )
         }
-      });
-      document.getElementById('ytConnectBtn').onclick = connectYouTube;
-      document.getElementById('backBtn').onclick = dashboardView;
-    }
 
-    async function switchYTAccount(idx) {
-      try {
-        await api('POST','/api/youtube/switch',{ idx });
-        setStatus('Switched!',false); await loadUser(true); ytAccountsView();
-      } catch(e) { setStatus(e.message,true); }
-    }
-    async function disconnectYTAccount(idx) {
-      try {
-        await api('POST','/api/youtube/disconnect',{ idx });
-        setStatus('Disconnected!',false); await loadUser(true); ytAccountsView();
-      } catch(e) { setStatus(e.message,true); }
-    }
+        return data
 
-    async function connectYouTube() {
-      ytLoading = true; ytAccountsView();
-      try {
-        let d = await api('GET','/api/youtube/connect');
-        window.location = d.url;
-      } catch(e) { ytLoading=false; setStatus(e.message,true); }
-    }
-    // Called on /oauth/google-callback page, GET param ?code=...
-    async function handleYTCodeConnect() {
-      const code = new URLSearchParams(window.location.search).get('code');
-      if(!code) { dashboardView(); return; }
-      show(`<div class="card center"><h2>Connecting YouTube...</h2><div id="status"></div></div>`);
-      try {
-        await api('POST','/api/youtube/callback', { code });
-        setStatus('YouTube channel connected!',false);
-        window.history.replaceState({},document.title,"/"); // Cleanup URL
-        await loadUser();
-      } catch(err) {
-        setStatus('YouTube Connect Failed: '+err.message,true);
-        setTimeout(dashboardView, 3000);
+      }catch(err){
+
+        showToast(
+          err.message,
+          'error'
+        )
+
+        throw err
       }
     }
 
-    function dashboardView() {
-      let currYt = user.ytAccounts && user.ytAccounts[user.selectedAccount||0];
-      show(`<div class="card center">
-        <h2>Dashboard</h2>
-        <div id="status"></div>
-        <div>
-          <button class="btn" id="goPrefsBtn" style="margin-bottom:7px;">Update Preferences</button>
-          <button class="btn" id="ytAcctBtn" style="margin-bottom:7px;background:var(--accent);color:#212;">YouTube Accounts</button>
-          <button class="btn" id="newShortBtn" style="margin-bottom:7px;background:#4DB34D;">Schedule New Short</button>
+    // =========================
+    // TOGGLE AUTH
+    // =========================
+
+    function toggleAuth(){
+
+      isLogin = !isLogin
+
+      const title =
+      document.getElementById(
+        'authTitle'
+      )
+
+      const btn =
+      document.getElementById(
+        'authBtn'
+      )
+
+      const toggle =
+      document.getElementById(
+        'toggleText'
+      )
+
+      const nameField =
+      document.getElementById(
+        'nameField'
+      )
+
+      if(isLogin){
+
+        title.innerText =
+        'Welcome Back'
+
+        btn.innerText =
+        'Login'
+
+        nameField.style.display =
+        'none'
+
+        toggle.innerHTML =
+        `
+        Don't have account?
+        <span onclick="toggleAuth()">
+        Signup
+        </span>
+        `
+
+      }else{
+
+        title.innerText =
+        'AutoTube AI'
+
+        btn.innerText =
+        'Create Account'
+
+        nameField.style.display =
+        'block'
+
+        toggle.innerHTML =
+        `
+        Already have account?
+        <span onclick="toggleAuth()">
+        Login
+        </span>
+        `
+      }
+    }
+
+    // =========================
+    // AUTH
+    // =========================
+
+    document
+    .getElementById('authBtn')
+    .addEventListener(
+      'click',
+      authUser
+    )
+
+    async function authUser(){
+
+      try{
+
+        showLoader()
+
+        const name =
+        document.getElementById(
+          'name'
+        ).value.trim()
+
+        const email =
+        document.getElementById(
+          'email'
+        ).value.trim()
+
+        const password =
+        document.getElementById(
+          'password'
+        ).value.trim()
+
+        if(!email || !password){
+
+          hideLoader()
+
+          showToast(
+            'Fill all fields',
+            'warning'
+          )
+
+          return
+        }
+
+        if(
+          !isLogin &&
+          !name
+        ){
+
+          hideLoader()
+
+          showToast(
+            'Enter your name',
+            'warning'
+          )
+
+          return
+        }
+
+        if(password.length < 6){
+
+          hideLoader()
+
+          showToast(
+            'Password too short',
+            'warning'
+          )
+
+          return
+        }
+
+        const endpoint =
+        isLogin
+        ? 'login'
+        : 'signup'
+
+        const body =
+        isLogin
+        ? { email,password }
+        : { name,email,password }
+
+        const data =
+        await safeFetch(
+          `${API}/${endpoint}`,
+          {
+            method:'POST',
+
+            headers:{
+              'Content-Type':
+              'application/json'
+            },
+
+            body:JSON.stringify(body)
+          }
+        )
+
+        localStorage.setItem(
+          'token',
+          data.token
+        )
+
+        document.getElementById(
+          'authScreen'
+        ).style.display='none'
+
+        showToast(
+          isLogin
+          ? 'Login successful'
+          : 'Account created'
+        )
+
+        loadUser()
+
+      }catch(err){
+
+        console.log(err)
+
+      }finally{
+
+        hideLoader()
+      }
+    }
+
+    // =========================
+    // LOAD USER
+    // =========================
+
+    async function loadUser(){
+
+      try{
+
+        const token =
+        localStorage.getItem(
+          'token'
+        )
+
+        if(!token) return
+
+        showLoader()
+
+        const data =
+        await safeFetch(
+          `${API}/me`,
+          {
+            headers:{
+              Authorization:
+              `Bearer ${token}`
+            }
+          }
+        )
+
+        renderAccounts(
+          data.user.ytAccounts,
+          data.user.selectedAccount
+        )
+
+      }catch(err){
+
+        console.log(err)
+
+      }finally{
+
+        hideLoader()
+      }
+    }
+
+    // =========================
+    // RENDER ACCOUNTS
+    // =========================
+
+    function renderAccounts(
+      accounts,
+      selected
+    ){
+
+      const container =
+      document.getElementById(
+        'accounts'
+      )
+
+      document.getElementById(
+        'channelCount'
+      ).innerText =
+      accounts.length
+
+      if(accounts.length === 0){
+
+        container.innerHTML =
+        `
+        <div class="stat-card">
+          <h2>No Channels</h2>
+          <p>
+            Connect your first
+            YouTube account 🚀
+          </p>
         </div>
-        <div style="margin:10px 0;">
-          ${currYt ? `<span style="font-size:1.04em">Connected channel: <b>${currYt.channelTitle}</b></span>` : `<span style="color:#e74b47">YouTube channel NOT linked!</span>`}
-        </div>
-      </div>
-      <div id="shortsCont"></div>
-      `);
-      document.getElementById('goPrefsBtn').onclick = prefsView;
-      document.getElementById('ytAcctBtn').onclick = ytAccountsView;
-      document.getElementById('newShortBtn').onclick = async () => {
-        setStatus("Scheduling...");
-        try {
-          await api('POST','/api/schedule');
-          setStatus("Short scheduled! You will see it in your list shortly.", false);
-          loadShorts();
-        } catch(e) {
-          setStatus(e.message, true);
-        }
-      };
-      loadShorts();
-    }
+        `
 
-    async function loadUser(isSilent) {
-      try {
-        let data = await api('GET', '/api/me');
-        user = data.user;
-        if (!themes.length || !niches.length) {
-          let t = await api('GET', '/api/templates', null, false);
-          themes = t.themes; niches = t.niches;
-        }
-        document.getElementById('logoutBtn').style.display = 'block';
-        if (!isSilent) dashboardView();
-      } catch(e) {
-        token = ''; localStorage.removeItem('token');
-        document.getElementById('logoutBtn').style.display = 'none';
-        loginView();
+        return
       }
-    }
 
-    async function loadShorts() {
-      try {
-        let d = await api('GET','/api/my-shorts');
-        let html = '';
-        if (!d.shorts || !d.shorts.length)
-          html = `<div class="card center">No Shorts yet! Schedule one now.</div>`;
-        else html = d.shorts.map(s => `
-          <div class="short-card">
-            <img class="short-thumb" src="${s.thumbUrl || ''}" alt="">
-            <div>
-              <strong>${s.topic||''}</strong><br>
-              <span>${s.quote||''}</span>
-              <span class="date">${s.status === "done" && s.uploadedAt ? 
-                `Uploaded ${new Date(s.uploadedAt).toLocaleString()}` :
-                s.status === "pending" ? "Pending" : s.status === "failed" ? "Failed" : ""
-              }</span>
-              ${s.error? `<div class="job-error">${s.error}</div>`:""}
+      container.innerHTML = ''
+
+      accounts.forEach(
+        (acc,index)=>{
+
+          container.innerHTML +=
+          `
+          <div class="account">
+
+            <div class="profile">
+
+              <img
+                src="${acc.profileImg}"
+              />
+
+              <div>
+
+                <h3>
+                  ${acc.channelTitle}
+                </h3>
+
+                <p>
+                  ${acc.email}
+                </p>
+
+              </div>
+
             </div>
+
+            ${
+              selected === index
+              ?
+              `
+              <div class="badge">
+                ACTIVE CHANNEL
+              </div>
+              `
+              :
+              ''
+            }
+
+            <div class="actions">
+
+              <button
+                class="switch-btn"
+                onclick="switchAccount(${index})"
+              >
+                Switch
+              </button>
+
+              <button
+                class="disconnect-btn"
+                onclick="disconnectAccount(${index})"
+              >
+                Disconnect
+              </button>
+
+            </div>
+
           </div>
-        `).join('');
-        document.getElementById('shortsCont').innerHTML = html;
-      } catch(e) {
-        document.getElementById('shortsCont').innerHTML = `<div class="error">${e.message}</div>`;
+          `
+        }
+      )
+    }
+
+    // =========================
+    // CONNECT YOUTUBE
+    // =========================
+
+    async function connectYouTube(){
+
+      try{
+
+        showLoader()
+
+        const token =
+        localStorage.getItem(
+          'token'
+        )
+
+        const data =
+        await safeFetch(
+          `${API}/youtube/connect`,
+          {
+            headers:{
+              Authorization:
+              `Bearer ${token}`
+            }
+          }
+        )
+
+        hideLoader()
+
+        window.open(
+          data.url,
+          '_blank'
+        )
+
+        const code =
+        prompt(
+          'Paste OAuth code here'
+        )
+
+        if(!code){
+
+          showToast(
+            'OAuth cancelled',
+            'warning'
+          )
+
+          return
+        }
+
+        showLoader()
+
+        const callback =
+        await safeFetch(
+          `${API}/youtube/callback`,
+          {
+            method:'POST',
+
+            headers:{
+              'Content-Type':
+              'application/json',
+
+              Authorization:
+              `Bearer ${token}`
+            },
+
+            body:JSON.stringify({
+              code
+            })
+          }
+        )
+
+        renderAccounts(
+          callback.ytAccounts,
+          callback.selectedAccount
+        )
+
+        showToast(
+          'YouTube connected'
+        )
+
+      }catch(err){
+
+        console.log(err)
+
+      }finally{
+
+        hideLoader()
       }
     }
 
-    document.getElementById('logoutBtn').onclick = () => {
-      token = ''; localStorage.removeItem('token');
-      user = null;
-      document.getElementById('logoutBtn').style.display = 'none';
-      loginView();
-    }
+    // =========================
+    // SWITCH ACCOUNT
+    // =========================
 
-    // Handle all navigation as SPA (for Vercel rewrite)
-    function route() {
-      if (window.location.pathname === '/oauth/google-callback') {
-        handleYTCodeConnect();
-      } else {
-        token ? loadUser() : loginView();
+    async function switchAccount(
+      idx
+    ){
+
+      try{
+
+        showLoader()
+
+        const token =
+        localStorage.getItem(
+          'token'
+        )
+
+        await safeFetch(
+          `${API}/youtube/switch`,
+          {
+            method:'POST',
+
+            headers:{
+              'Content-Type':
+              'application/json',
+
+              Authorization:
+              `Bearer ${token}`
+            },
+
+            body:JSON.stringify({
+              idx
+            })
+          }
+        )
+
+        showToast(
+          'Account switched'
+        )
+
+        loadUser()
+
+      }catch(err){
+
+        console.log(err)
+
+      }finally{
+
+        hideLoader()
       }
-      setTimeout(()=>window.scrollTo(0,1),300);
     }
 
-    window.onpopstate = route;
-    window.onload = route;
+    // =========================
+    // DISCONNECT
+    // =========================
+
+    async function disconnectAccount(
+      idx
+    ){
+
+      try{
+
+        const confirmDelete =
+        confirm(
+          'Disconnect account?'
+        )
+
+        if(!confirmDelete) return
+
+        showLoader()
+
+        const token =
+        localStorage.getItem(
+          'token'
+        )
+
+        const data =
+        await safeFetch(
+          `${API}/youtube/disconnect`,
+          {
+            method:'POST',
+
+            headers:{
+              'Content-Type':
+              'application/json',
+
+              Authorization:
+              `Bearer ${token}`
+            },
+
+            body:JSON.stringify({
+              idx
+            })
+          }
+        )
+
+        renderAccounts(
+          data.ytAccounts,
+          data.selectedAccount
+        )
+
+        showToast(
+          'Account disconnected'
+        )
+
+      }catch(err){
+
+        console.log(err)
+
+      }finally{
+
+        hideLoader()
+      }
+    }
+
+    // =========================
+    // LOGOUT
+    // =========================
+
+    function logout(){
+
+      localStorage.removeItem(
+        'token'
+      )
+
+      document.getElementById(
+        'authScreen'
+      ).style.display='flex'
+
+      showToast(
+        'Logged out',
+        'warning'
+      )
+    }
+
+    // =========================
+    // AUTO LOGIN
+    // =========================
+
+    loadUser()
+
   </script>
+
 </body>
 </html>
