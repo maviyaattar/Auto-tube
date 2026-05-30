@@ -20,6 +20,22 @@ body{
   display:none !important;
 }
 
+.loader{
+
+  position:fixed;
+  inset:0;
+
+  background:#000000aa;
+
+  display:flex;
+  justify-content:center;
+  align-items:center;
+
+  z-index:9999;
+
+  font-size:24px;
+}
+
 .auth-screen{
 
   min-height:100vh;
@@ -31,12 +47,14 @@ body{
   padding:20px;
 }
 
-.auth-box{
+.auth-card{
 
   width:100%;
-  max-width:400px;
+  max-width:420px;
 
   background:#111827;
+
+  border:1px solid #ffffff12;
 
   border-radius:24px;
 
@@ -47,28 +65,32 @@ body{
   gap:15px;
 }
 
-.auth-box h1{
+.auth-card h1{
   text-align:center;
 }
 
-.auth-box p{
+.auth-card p{
 
   text-align:center;
 
   color:#9ca3af;
+
+  margin-bottom:10px;
 }
 
 input,
 select,
 button{
 
-  padding:15px;
-
   border:none;
+
+  outline:none;
 
   border-radius:14px;
 
-  outline:none;
+  padding:15px;
+
+  font-size:15px;
 }
 
 input,
@@ -83,7 +105,8 @@ button{
 
   cursor:pointer;
 
-  background:linear-gradient(
+  background:
+  linear-gradient(
     to right,
     #7c3aed,
     #06b6d4
@@ -92,6 +115,12 @@ button{
   color:white;
 
   font-weight:bold;
+
+  transition:0.3s;
+}
+
+button:hover{
+  opacity:0.9;
 }
 
 .app{
@@ -110,7 +139,14 @@ button{
 
   display:flex;
   flex-direction:column;
-  gap:15px;
+  justify-content:space-between;
+}
+
+.sidebar button{
+
+  width:100%;
+
+  margin-bottom:12px;
 }
 
 .logo{
@@ -119,7 +155,12 @@ button{
 
   font-weight:bold;
 
-  margin-bottom:20px;
+  margin-bottom:30px;
+}
+
+.logout-btn{
+
+  background:#ff004422;
 }
 
 .main{
@@ -129,15 +170,21 @@ button{
   padding:30px;
 }
 
-.main h1{
-  margin-bottom:25px;
+.topbar{
+  margin-bottom:30px;
 }
 
-.main h2{
+.topbar p{
+  color:#9ca3af;
+}
 
-  margin:
+.section-title{
 
-  30px 0 15px;
+  font-size:22px;
+
+  margin-bottom:20px;
+
+  margin-top:30px;
 }
 
 .grid{
@@ -145,7 +192,7 @@ button{
   display:grid;
 
   grid-template-columns:
-  repeat(auto-fit,minmax(280px,1fr));
+  repeat(auto-fit,minmax(300px,1fr));
 
   gap:20px;
 }
@@ -154,7 +201,9 @@ button{
 
   background:#111827;
 
-  border-radius:20px;
+  border:1px solid #ffffff10;
+
+  border-radius:24px;
 
   padding:20px;
 }
@@ -179,7 +228,7 @@ button{
 
   color:#9ca3af;
 
-  margin-bottom:15px;
+  margin-bottom:10px;
 }
 
 .badge{
@@ -190,25 +239,28 @@ button{
 
   border-radius:100px;
 
-  font-size:13px;
-
   margin-bottom:15px;
+
+  font-size:13px;
 }
 
 .active{
+
   background:#00ff8822;
+
   color:#00ff88;
 }
 
 .paused{
+
   background:#ffaa0022;
+
   color:#ffaa00;
 }
 
 .modal{
 
   position:fixed;
-
   inset:0;
 
   background:#000000aa;
@@ -218,9 +270,11 @@ button{
   align-items:center;
 
   padding:20px;
+
+  z-index:999;
 }
 
-.modal-box{
+.modal-card{
 
   width:100%;
   max-width:450px;
@@ -236,6 +290,17 @@ button{
   gap:15px;
 }
 
+.modal-actions{
+
+  display:flex;
+  gap:10px;
+}
+
+.danger{
+
+  background:#ff004422;
+}
+
 @media(max-width:768px){
 
   .app{
@@ -247,5 +312,9 @@ button{
     width:100%;
 
     min-height:auto;
+  }
+
+  .main{
+    padding:20px;
   }
 }
