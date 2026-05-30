@@ -1,4 +1,3 @@
-
 <!-- index.html -->
 
 <!DOCTYPE html>
@@ -22,6 +21,15 @@
 </head>
 <body>
 
+  <!-- LOADER -->
+
+  <div
+    id="loader"
+    class="loader hidden"
+  >
+    Loading...
+  </div>
+
   <!-- AUTH -->
 
   <div
@@ -29,14 +37,14 @@
     id="authScreen"
   >
 
-    <div class="auth-box">
+    <div class="auth-card">
 
       <h1>
-        AutoTube AI
+        AutoTube AI 🚀
       </h1>
 
       <p>
-        AI Shorts SaaS
+        AI Shorts Automation SaaS
       </p>
 
       <input
@@ -78,61 +86,88 @@
 
     <!-- SIDEBAR -->
 
-    <div class="sidebar">
+    <aside class="sidebar">
 
-      <div class="logo">
-        AutoTube
+      <div>
+
+        <div class="logo">
+          AutoTube
+        </div>
+
+        <button onclick="loadDashboard()">
+          Dashboard
+        </button>
+
+        <button onclick="connectYouTube()">
+          Connect Channel
+        </button>
+
+        <button onclick="openModal()">
+          Create Project
+        </button>
+
       </div>
 
-      <button onclick="loadDashboard()">
-        Dashboard
-      </button>
-
-      <button onclick="connectYouTube()">
-        Connect Channel
-      </button>
-
-      <button onclick="openProjectModal()">
-        Create Project
-      </button>
-
-      <button onclick="logout()">
+      <button
+        class="logout-btn"
+        onclick="logout()"
+      >
         Logout
       </button>
 
-    </div>
+    </aside>
 
     <!-- MAIN -->
 
-    <div class="main">
+    <main class="main">
 
-      <h1>
-        Dashboard 🚀
-      </h1>
+      <div class="topbar">
+
+        <div>
+
+          <h1>
+            Dashboard 🚀
+          </h1>
+
+          <p>
+            AI Shorts SaaS Platform
+          </p>
+
+        </div>
+
+      </div>
 
       <!-- CHANNELS -->
 
-      <h2>
-        Channels
-      </h2>
+      <section>
 
-      <div
-        class="grid"
-        id="channelsGrid"
-      ></div>
+        <div class="section-title">
+          Channels
+        </div>
+
+        <div
+          class="grid"
+          id="channelsGrid"
+        ></div>
+
+      </section>
 
       <!-- PROJECTS -->
 
-      <h2>
-        Projects
-      </h2>
+      <section>
 
-      <div
-        class="grid"
-        id="projectsGrid"
-      ></div>
+        <div class="section-title">
+          Projects
+        </div>
 
-    </div>
+        <div
+          class="grid"
+          id="projectsGrid"
+        ></div>
+
+      </section>
+
+    </main>
 
   </div>
 
@@ -143,7 +178,7 @@
     id="projectModal"
   >
 
-    <div class="modal-box">
+    <div class="modal-card">
 
       <h2>
         Create Project
@@ -219,13 +254,20 @@
 
       <select id="projectChannel"></select>
 
-      <button onclick="createProject()">
-        Create
-      </button>
+      <div class="modal-actions">
 
-      <button onclick="closeProjectModal()">
-        Close
-      </button>
+        <button onclick="createProject()">
+          Create
+        </button>
+
+        <button
+          class="danger"
+          onclick="closeModal()"
+        >
+          Close
+        </button>
+
+      </div>
 
     </div>
 
