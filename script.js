@@ -6,49 +6,63 @@ const API =
 let token =
 localStorage.getItem('token') || ''
 
-// ======================================
+// =====================================
 // START
-// ======================================
+// =====================================
 
 window.onload = async ()=>{
 
-  if(token){
+  try{
 
-    showApp()
+    if(token){
 
-    await handleOAuth()
+      showApp()
 
-    await loadDashboard()
+      await handleOAuth()
+
+      await loadDashboard()
+    }
+
+  }catch(err){
+
+    console.log(err)
+
+    logout()
   }
 }
 
-// ======================================
+// =====================================
 // HELPERS
-// ======================================
+// =====================================
 
 function showLoader(){
 
   document
   .getElementById('loader')
-  .classList.remove('hidden')
+  ?.classList.remove('hidden')
 }
 
 function hideLoader(){
 
   document
   .getElementById('loader')
-  .classList.add('hidden')
+  ?.classList.add('hidden')
+}
+
+function toast(msg){
+
+  alert(msg)
 }
 
 function showApp(){
 
   document
   .getElementById('authScreen')
-  .classList.add('hidden')
+  ?.classList.add('hidden')
 
   document
   .getElementById('app')
-  .classList.remove('hidden')
+  ?.classList.remove('hidden')
 }
 
 function headers(){
@@ -62,6 +76,10 @@ function headers(){
   }
 }
 
+// =====================================
+// API HANDLER
+// =====================================
+
 async function api(
   url,
   options={}
@@ -73,23 +91,39 @@ async function api(
 
     const res =
     await fetch(
+
       API + url,
+
       options
     )
 
-    const data =
-    await res.json()
+    const text =
+    await res.text()
+
+    let data
+
+    try{
+
+      data = JSON.parse(text)
+
+    }catch{
+
+      console.log(text)
+
+      throw new Error(
+
+        'Invalid server response'
+      )
+    }
 
     hideLoader()
 
     if(!res.ok){
 
-      alert(
-        data.msg || 'Error'
-      )
-
       throw new Error(
-        data.msg
+
+        data.msg ||
+        'Request failed'
       )
     }
 
@@ -101,139 +135,170 @@ async function api(
 
     console.log(err)
 
-    alert(
+    toast(
+
       err.message ||
       'Something went wrong'
     )
+
+    return null
   }
 }
 
-// ======================================
+// =====================================
 // AUTH
-// ======================================
+// =====================================
 
 async function signup(){
 
-  const name =
-  document
-  .getElementById('name')
-  .value
-  .trim()
+  try{
 
-  const email =
-  document
-  .getElementById('email')
-  .value
-  .trim()
+    const name =
+    document
+    .getElementById('name')
+    .value
+    .trim()
 
-  const password =
-  document
-  .getElementById('password')
-  .value
-  .trim()
+    const email =
+    document
+    .getElementById('email')
+    .value
+    .trim()
 
-  if(
-    !name ||
-    !email ||
-    !password
-  ){
-    return alert(
-      'Fill all fields'
-    )
-  }
+    const password =
+    document
+    .getElementById('password')
+    .value
+    .trim()
 
-  const data =
-  await api(
+    if(
+      !name ||
+      !email ||
+      !password
+    ){
 
-    '/signup',
-
-    {
-
-      method:'POST',
-
-      headers:{
-        'Content-Type':'application/json'
-      },
-
-      body:JSON.stringify({
-
-        name,
-        email,
-        password
-      })
+      return toast(
+        'Fill all fields'
+      )
     }
-  )
 
-  if(!data) return
+    const data =
+    await api(
 
-  token = data.token
+      '/signup',
 
-  localStorage.setItem(
-    'token',
-    token
-  )
+      {
 
-  showApp()
+        method:'POST',
 
-  loadDashboard()
+        headers:{
+          'Content-Type':'application/json'
+        },
+
+        body:JSON.stringify({
+
+          name,
+          email,
+          password
+        })
+      }
+    )
+
+    if(!data) return
+
+    token = data.token
+
+    localStorage.setItem(
+      'token',
+      token
+    )
+
+    toast(
+      'Signup Success'
+    )
+
+    showApp()
+
+    await loadDashboard()
+
+  }catch(err){
+
+    console.log(err)
+
+    toast(err.message)
+  }
 }
 
 async function login(){
 
-  const email =
-  document
-  .getElementById('email')
-  .value
-  .trim()
+  try{
 
-  const password =
-  document
-  .getElementById('password')
-  .value
-  .trim()
+    const email =
+    document
+    .getElementById('email')
+    .value
+    .trim()
 
-  if(
-    !email ||
-    !password
-  ){
-    return alert(
-      'Fill all fields'
-    )
-  }
+    const password =
+    document
+    .getElementById('password')
+    .value
+    .trim()
 
-  const data =
-  await api(
+    if(
+      !email ||
+      !password
+    ){
 
-    '/login',
-
-    {
-
-      method:'POST',
-
-      headers:{
-        'Content-Type':'application/json'
-      },
-
-      body:JSON.stringify({
-
-        email,
-        password
-      })
+      return toast(
+        'Fill all fields'
+      )
     }
-  )
 
-  if(!data) return
+    const data =
+    await api(
 
-  token = data.token
+      '/login',
 
-  localStorage.setItem(
-    'token',
-    token
-  )
+      {
 
-  showApp()
+        method:'POST',
 
-  loadDashboard()
+        headers:{
+          'Content-Type':'application/json'
+        },
+
+        body:JSON.stringify({
+
+          email,
+          password
+        })
+      }
+    )
+
+    if(!data) return
+
+    token = data.token
+
+    localStorage.setItem(
+      'token',
+      token
+    )
+
+    toast(
+      'Login Success'
+    )
+
+    showApp()
+
+    await loadDashboard()
+
+  }catch(err){
+
+    console.log(err)
+
+    toast(err.message)
+  }
 }
 
 function logout(){
@@ -242,120 +307,161 @@ function logout(){
     'token'
   )
 
-  location.reload()
+  location.href = '/'
 }
 
-// ======================================
+// =====================================
 // YOUTUBE CONNECT
-// ======================================
+// =====================================
 
 async function connectYouTube(){
 
-  const data =
-  await api(
+  try{
 
-    '/youtube/connect',
+    const data =
+    await api(
 
-    {
+      '/youtube/connect',
 
-      headers:headers()
+      {
+
+        headers:headers()
+      }
+    )
+
+    if(
+      data &&
+      data.url
+    ){
+
+      window.location.href =
+      data.url
     }
-  )
 
-  if(data?.url){
+  }catch(err){
 
-    window.location.href =
-    data.url
+    console.log(err)
+
+    toast(err.message)
   }
 }
 
-// ======================================
-// OAUTH CALLBACK
-// ======================================
+// =====================================
+// GOOGLE CALLBACK
+// =====================================
 
 async function handleOAuth(){
 
-  const params =
-  new URLSearchParams(
-    location.search
-  )
+  try{
 
-  const code =
-  params.get('code')
+    const params =
+    new URLSearchParams(
+      location.search
+    )
 
-  if(!code) return
+    const code =
+    params.get('code')
 
-  await api(
+    if(!code) return
 
-    '/youtube/callback',
+    const data =
+    await api(
 
-    {
+      '/youtube/callback',
 
-      method:'POST',
+      {
 
-      headers:headers(),
+        method:'POST',
 
-      body:JSON.stringify({
+        headers:headers(),
 
-        code
-      })
+        body:JSON.stringify({
+
+          code
+        })
+      }
+    )
+
+    if(data){
+
+      toast(
+        'YouTube Connected Successfully'
+      )
+
+      history.replaceState(
+
+        {},
+
+        document.title,
+
+        '/'
+      )
     }
-  )
 
-  history.replaceState(
-    {},
-    document.title,
-    '/'
-  )
+  }catch(err){
+
+    console.log(err)
+
+    toast(err.message)
+  }
 }
 
-// ======================================
+// =====================================
 // DASHBOARD
-// ======================================
+// =====================================
 
 async function loadDashboard(){
 
-  const channelsRes =
-  await api(
+  try{
 
-    '/channels',
+    const channelsRes =
+    await api(
 
-    {
+      '/channels',
 
-      headers:headers()
-    }
-  )
+      {
 
-  const projectsRes =
-  await api(
+        headers:headers()
+      }
+    )
 
-    '/projects',
+    const projectsRes =
+    await api(
 
-    {
+      '/projects',
 
-      headers:headers()
-    }
-  )
+      {
 
-  if(!channelsRes || !projectsRes)
-  return
+        headers:headers()
+      }
+    )
 
-  renderChannels(
-    channelsRes.channels
-  )
+    if(!channelsRes || !projectsRes)
+    return
 
-  renderProjects(
-    projectsRes.projects
-  )
+    renderChannels(
+      channelsRes.channels || []
+    )
 
-  fillChannelSelect(
-    channelsRes.channels
-  )
+    renderProjects(
+      projectsRes.projects || []
+    )
+
+    fillChannelSelect(
+      channelsRes.channels || []
+    )
+
+  }catch(err){
+
+    console.log(err)
+
+    toast(err.message)
+  }
 }
 
-// ======================================
-// RENDER CHANNELS
-// ======================================
+// =====================================
+// CHANNELS
+// =====================================
 
 function renderChannels(
   channels
@@ -366,12 +472,21 @@ function renderChannels(
     'channelsGrid'
   )
 
+  if(!grid) return
+
   grid.innerHTML = ''
 
   if(!channels.length){
 
-    grid.innerHTML =
-    '<p>No channels connected</p>'
+    grid.innerHTML = `
+
+    <div class="empty">
+
+      No Channels Connected
+
+    </div>
+
+    `
 
     return
   }
@@ -382,7 +497,10 @@ function renderChannels(
 
     <div class="card">
 
-      <img src="${channel.profileImg}" />
+      <img
+        src="${channel.profileImg}"
+        class="channel-img"
+      />
 
       <h3>
         ${channel.channelTitle}
@@ -398,9 +516,9 @@ function renderChannels(
   })
 }
 
-// ======================================
-// RENDER PROJECTS
-// ======================================
+// =====================================
+// PROJECTS
+// =====================================
 
 function renderProjects(
   projects
@@ -411,12 +529,21 @@ function renderProjects(
     'projectsGrid'
   )
 
+  if(!grid) return
+
   grid.innerHTML = ''
 
   if(!projects.length){
 
-    grid.innerHTML =
-    '<p>No projects created</p>'
+    grid.innerHTML = `
+
+    <div class="empty">
+
+      No Projects Yet
+
+    </div>
+
+    `
 
     return
   }
@@ -438,7 +565,6 @@ function renderProjects(
       </h3>
 
       <p>
-        Niche:
         ${project.niche}
       </p>
 
@@ -454,7 +580,7 @@ function renderProjects(
 
       <p>
         Topics:
-        ${project.topics.join(', ')}
+        ${project.topics?.join(', ')}
       </p>
 
     </div>
@@ -463,9 +589,9 @@ function renderProjects(
   })
 }
 
-// ======================================
+// =====================================
 // MODAL
-// ======================================
+// =====================================
 
 function openModal(){
 
@@ -473,7 +599,7 @@ function openModal(){
   .getElementById(
     'projectModal'
   )
-  .classList.remove('hidden')
+  ?.classList.remove('hidden')
 }
 
 function closeModal(){
@@ -482,12 +608,12 @@ function closeModal(){
   .getElementById(
     'projectModal'
   )
-  .classList.add('hidden')
+  ?.classList.add('hidden')
 }
 
-// ======================================
-// CHANNEL SELECT
-// ======================================
+// =====================================
+// FILL CHANNEL SELECT
+// =====================================
 
 function fillChannelSelect(
   channels
@@ -497,6 +623,8 @@ function fillChannelSelect(
   document.getElementById(
     'projectChannel'
   )
+
+  if(!select) return
 
   select.innerHTML = ''
 
@@ -514,90 +642,108 @@ function fillChannelSelect(
   })
 }
 
-// ======================================
+// =====================================
 // CREATE PROJECT
-// ======================================
+// =====================================
 
 async function createProject(){
 
-  const name =
-  document
-  .getElementById(
-    'projectName'
-  )
-  .value
-  .trim()
+  try{
 
-  const niche =
-  document
-  .getElementById(
-    'projectNiche'
-  )
-  .value
-
-  const theme =
-  document
-  .getElementById(
-    'projectTheme'
-  )
-  .value
-
-  const privacy =
-  document
-  .getElementById(
-    'projectPrivacy'
-  )
-  .value
-
-  const channelId =
-  document
-  .getElementById(
-    'projectChannel'
-  )
-  .value
-
-  const topics =
-  document
-  .getElementById(
-    'projectTopics'
-  )
-  .value
-  .split(',')
-  .map(v=>v.trim())
-  .filter(Boolean)
-
-  if(
-    !name ||
-    !channelId
-  ){
-    return alert(
-      'Fill required fields'
+    const name =
+    document
+    .getElementById(
+      'projectName'
     )
-  }
+    .value
+    .trim()
 
-  await api(
+    const niche =
+    document
+    .getElementById(
+      'projectNiche'
+    )
+    .value
 
-    '/projects',
+    const theme =
+    document
+    .getElementById(
+      'projectTheme'
+    )
+    .value
 
-    {
+    const privacy =
+    document
+    .getElementById(
+      'projectPrivacy'
+    )
+    .value
 
-      method:'POST',
+    const channelId =
+    document
+    .getElementById(
+      'projectChannel'
+    )
+    .value
 
-      headers:headers(),
+    const topics =
+    document
+    .getElementById(
+      'projectTopics'
+    )
+    .value
+    .split(',')
+    .map(v=>v.trim())
+    .filter(Boolean)
 
-      body:JSON.stringify({
+    if(
+      !name ||
+      !channelId
+    ){
 
-        name,
-        niche,
-        theme,
-        privacy,
-        topics,
-        channelId
-      })
+      return toast(
+        'Fill all required fields'
+      )
     }
-  )
 
-  closeModal()
+    const data =
+    await api(
 
-  loadDashboard()
+      '/projects',
+
+      {
+
+        method:'POST',
+
+        headers:headers(),
+
+        body:JSON.stringify({
+
+          name,
+          niche,
+          theme,
+          privacy,
+          topics,
+          channelId
+        })
+      }
+    )
+
+    if(data){
+
+      toast(
+        'Project Created'
+      )
+
+      closeModal()
+
+      await loadDashboard()
+    }
+
+  }catch(err){
+
+    console.log(err)
+
+    toast(err.message)
+  }
 }
