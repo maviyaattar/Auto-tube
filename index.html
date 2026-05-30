@@ -1,1342 +1,237 @@
+
+<!-- index.html -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-<title>AutoTube AI</title>
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-
-<style>
-
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:'Poppins',sans-serif;
-}
-
-:root{
-
-  --bg:#050816;
-  --card:#101827;
-  --border:#ffffff14;
-  --text:#ffffff;
-  --muted:#9ca3af;
-
-  --purple:#7c3aed;
-  --cyan:#06b6d4;
-  --green:#00ff88;
-  --red:#ff4d79;
-  --gold:#ffd166;
-}
-
-body{
-
-  min-height:100vh;
-
-  color:var(--text);
-
-  background:
-  radial-gradient(circle at top left,#7c3aed33,transparent 25%),
-  radial-gradient(circle at bottom right,#06b6d433,transparent 25%),
-  var(--bg);
-
-  overflow-x:hidden;
-}
-
-body::before{
-
-  content:'';
-
-  position:fixed;
-  inset:0;
-
-  background-image:
-  radial-gradient(rgba(255,255,255,0.08) 1px,transparent 1px);
-
-  background-size:40px 40px;
-
-  opacity:0.2;
-
-  pointer-events:none;
-}
-
-.app{
-
-  display:flex;
-  min-height:100vh;
-}
-
-/* ========================= */
-/* SIDEBAR */
-/* ========================= */
-
-.sidebar{
-
-  width:280px;
-
-  background:#0b1220;
-
-  border-right:1px solid var(--border);
-
-  padding:30px 20px;
-
-  display:flex;
-  flex-direction:column;
-  justify-content:space-between;
-
-  position:sticky;
-  top:0;
-  height:100vh;
-}
-
-.logo{
-
-  font-size:38px;
-  font-weight:800;
-
-  margin-bottom:40px;
-
-  background:
-  linear-gradient(
-    to right,
-    var(--purple),
-    var(--cyan)
-  );
-
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-}
-
-.menu{
-
-  display:flex;
-  flex-direction:column;
-  gap:14px;
-}
-
-.menu button{
-
-  border:none;
-  cursor:pointer;
-
-  background:#ffffff08;
-
-  color:white;
-
-  padding:16px;
-
-  border-radius:18px;
-
-  font-size:15px;
-
-  text-align:left;
-
-  transition:0.3s;
-}
-
-.menu button:hover,
-.menu .active{
-
-  background:
-  linear-gradient(
-    to right,
-    var(--purple),
-    var(--cyan)
-  );
-
-  transform:translateX(4px);
-}
-
-.logout{
-
-  border:none;
-  cursor:pointer;
-
-  background:#ff004c22;
-
-  color:#ff8ba7;
-
-  padding:16px;
-
-  border-radius:18px;
-
-  font-weight:600;
-}
-
-/* ========================= */
-/* MAIN */
-/* ========================= */
-
-.main{
-
-  flex:1;
-
-  padding:30px;
-}
-
-.topbar{
-
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:20px;
-
-  flex-wrap:wrap;
-
-  margin-bottom:30px;
-}
-
-.title h1{
-
-  font-size:42px;
-  margin-bottom:10px;
-}
-
-.title p{
-  color:var(--muted);
-}
-
-.create-btn{
-
-  border:none;
-  cursor:pointer;
-
-  padding:16px 24px;
-
-  border-radius:18px;
-
-  font-size:15px;
-  font-weight:700;
-
-  color:white;
-
-  background:
-  linear-gradient(
-    to right,
-    var(--purple),
-    var(--cyan)
-  );
-
-  box-shadow:
-  0 10px 30px rgba(124,58,237,0.35);
-}
-
-/* ========================= */
-/* STATS */
-/* ========================= */
-
-.stats{
-
-  display:grid;
-
-  grid-template-columns:
-  repeat(auto-fit,minmax(220px,1fr));
-
-  gap:20px;
-
-  margin-bottom:35px;
-}
-
-.stat-card{
-
-  background:var(--card);
-
-  border:1px solid var(--border);
-
-  border-radius:28px;
-
-  padding:26px;
-
-  position:relative;
-
-  overflow:hidden;
-}
-
-.stat-card::before{
-
-  content:'';
-
-  position:absolute;
-  inset:0;
-
-  background:
-  linear-gradient(
-    120deg,
-    transparent,
-    rgba(255,255,255,0.03),
-    transparent
-  );
-}
-
-.stat-card h2{
-
-  font-size:48px;
-
-  margin-bottom:12px;
-}
-
-.stat-card p{
-  color:var(--muted);
-}
-
-/* ========================= */
-/* GRID */
-/* ========================= */
-
-.grid{
-
-  display:grid;
-
-  grid-template-columns:
-  repeat(auto-fit,minmax(320px,1fr));
-
-  gap:24px;
-}
-
-/* ========================= */
-/* CARD */
-/* ========================= */
-
-.card{
-
-  background:var(--card);
-
-  border:1px solid var(--border);
-
-  border-radius:28px;
-
-  padding:24px;
-
-  position:relative;
-
-  overflow:hidden;
-
-  transition:0.3s;
-}
-
-.card:hover{
-
-  transform:translateY(-4px);
-
-  border-color:#ffffff25;
-}
-
-.card::before{
-
-  content:'';
-
-  position:absolute;
-
-  top:-120%;
-  left:-50%;
-
-  width:200%;
-  height:200%;
-
-  background:
-  linear-gradient(
-    120deg,
-    transparent,
-    rgba(255,255,255,0.04),
-    transparent
-  );
-
-  transform:rotate(20deg);
-
-  animation:shine 8s linear infinite;
-}
-
-@keyframes shine{
-
-  0%{
-
-    transform:
-    translateX(-100%)
-    rotate(20deg);
-  }
-
-  100%{
-
-    transform:
-    translateX(100%)
-    rotate(20deg);
-  }
-}
-
-.channel-head,
-.project-head{
-
-  display:flex;
-  align-items:center;
-  gap:16px;
-
-  margin-bottom:20px;
-}
-
-.channel-head img{
-
-  width:70px;
-  height:70px;
-
-  border-radius:50%;
-
-  object-fit:cover;
-
-  border:3px solid var(--cyan);
-}
-
-.channel-head h3,
-.project-head h3{
-
-  font-size:22px;
-
-  margin-bottom:4px;
-}
-
-.muted{
-
-  color:var(--muted);
-
-  font-size:14px;
-}
-
-.badge{
-
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-
-  padding:10px 16px;
-
-  border-radius:100px;
-
-  margin-bottom:18px;
-
-  font-size:13px;
-  font-weight:700;
-}
-
-.active-badge{
-
-  background:#00ff8822;
-  color:#00ff88;
-}
-
-.paused-badge{
-
-  background:#ffaa0022;
-  color:#ffaa00;
-}
-
-.theme-box{
-
-  display:flex;
-  gap:10px;
-
-  margin:18px 0;
-
-  flex-wrap:wrap;
-}
-
-.theme-pill{
-
-  padding:10px 14px;
-
-  border-radius:100px;
-
-  font-size:12px;
-  font-weight:700;
-
-  background:#ffffff08;
-}
-
-.actions{
-
-  display:flex;
-  gap:12px;
-
-  flex-wrap:wrap;
-
-  margin-top:20px;
-}
-
-.btn{
-
-  flex:1;
-
-  border:none;
-  cursor:pointer;
-
-  padding:14px;
-
-  border-radius:16px;
-
-  font-weight:700;
-
-  transition:0.3s;
-}
-
-.btn:hover{
-  transform:scale(1.02);
-}
-
-.primary{
-
-  background:
-  linear-gradient(
-    to right,
-    var(--purple),
-    var(--cyan)
-  );
-
-  color:white;
-}
-
-.danger{
-
-  background:#ff004c22;
-
-  color:#ff8ba7;
-}
-
-.warning{
-
-  background:#ffaa0022;
-
-  color:#ffaa00;
-}
-
-.success{
-
-  background:#00ff8822;
-
-  color:#00ff88;
-}
-
-/* ========================= */
-/* THEMES */
-/* ========================= */
-
-.theme-golden{
-
-  border:1px solid rgba(255,209,102,0.2);
-}
-
-.theme-dark{
-
-  border:1px solid rgba(0,229,255,0.2);
-}
-
-.theme-neon{
-
-  border:1px solid rgba(255,0,255,0.2);
-}
-
-.theme-minimal{
-
-  border:1px solid rgba(255,255,255,0.15);
-}
-
-/* ========================= */
-/* MOBILE */
-/* ========================= */
-
-.mobile-nav{
-  display:none;
-}
-
-@media(max-width:900px){
-
-  .app{
-    flex-direction:column;
-  }
-
-  .sidebar{
-
-    display:none;
-  }
-
-  .mobile-nav{
-
-    position:fixed;
-    bottom:20px;
-    left:50%;
-
-    transform:translateX(-50%);
-
-    width:95%;
-
-    background:#0f172acc;
-
-    backdrop-filter:blur(18px);
-
-    border:1px solid var(--border);
-
-    border-radius:24px;
-
-    padding:12px;
-
-    display:flex;
-    justify-content:space-around;
-
-    z-index:9999;
-  }
-
-  .mobile-nav button{
-
-    border:none;
-
-    background:none;
-
-    color:white;
-
-    font-size:20px;
-  }
-
-  .main{
-    padding:20px;
-    padding-bottom:120px;
-  }
-
-  .title h1{
-    font-size:32px;
-  }
-
-  .create-btn{
-    width:100%;
-  }
-
-  .grid{
-    grid-template-columns:1fr;
-  }
-
-  .stat-card h2{
-    font-size:40px;
-  }
-}
-
-</style>
+  <meta charset="UTF-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <title>AutoTube AI</title>
+
+  <link
+    rel="stylesheet"
+    href="style.css"
+  />
 
 </head>
 <body>
 
-<div class="app">
+  <!-- AUTH -->
 
-  <!-- SIDEBAR -->
+  <div
+    class="auth-screen"
+    id="authScreen"
+  >
 
-  <div class="sidebar">
+    <div class="auth-box">
 
-    <div>
+      <h1>
+        AutoTube AI
+      </h1>
+
+      <p>
+        AI Shorts SaaS
+      </p>
+
+      <input
+        type="text"
+        id="name"
+        placeholder="Name"
+      />
+
+      <input
+        type="email"
+        id="email"
+        placeholder="Email"
+      />
+
+      <input
+        type="password"
+        id="password"
+        placeholder="Password"
+      />
+
+      <button onclick="signup()">
+        Signup
+      </button>
+
+      <button onclick="login()">
+        Login
+      </button>
+
+    </div>
+
+  </div>
+
+  <!-- APP -->
+
+  <div
+    class="app hidden"
+    id="app"
+  >
+
+    <!-- SIDEBAR -->
+
+    <div class="sidebar">
 
       <div class="logo">
         AutoTube
       </div>
 
-      <div class="menu">
+      <button onclick="loadDashboard()">
+        Dashboard
+      </button>
 
-        <button class="active">
-          Dashboard
-        </button>
+      <button onclick="connectYouTube()">
+        Connect Channel
+      </button>
 
-        <button>
-          Channels
-        </button>
-
-        <button>
-          Projects
-        </button>
-
-        <button>
-          Uploads
-        </button>
-
-      </div>
-
-    </div>
-
-    <button class="logout">
-      Logout
-    </button>
-
-  </div>
-
-  <!-- MAIN -->
-
-  <div class="main">
-
-    <!-- TOPBAR -->
-
-    <div class="topbar">
-
-      <div class="title">
-
-        <h1>
-          Dashboard 🚀
-        </h1>
-
-        <p>
-          AI Shorts Automation SaaS
-        </p>
-
-      </div>
-
-      <button class="create-btn">
+      <button onclick="openProjectModal()">
         Create Project
+      </button>
+
+      <button onclick="logout()">
+        Logout
       </button>
 
     </div>
 
-    <!-- STATS -->
+    <!-- MAIN -->
 
-    <div class="stats">
+    <div class="main">
 
-      <div class="stat-card">
-        <h2>4</h2>
-        <p>Connected Channels</p>
-      </div>
+      <h1>
+        Dashboard 🚀
+      </h1>
 
-      <div class="stat-card">
-        <h2>12</h2>
-        <p>Total Projects</p>
-      </div>
+      <!-- CHANNELS -->
 
-      <div class="stat-card">
-        <h2>324</h2>
-        <p>Total Uploads</p>
-      </div>
+      <h2>
+        Channels
+      </h2>
 
-    </div>
+      <div
+        class="grid"
+        id="channelsGrid"
+      ></div>
 
-    <!-- GRID -->
+      <!-- PROJECTS -->
 
-    <div class="grid">
+      <h2>
+        Projects
+      </h2>
 
-      <!-- CARD -->
-
-      <div class="card theme-golden">
-
-        <div class="channel-head">
-
-          <img src="https://i.pravatar.cc/150?img=12">
-
-          <div>
-
-            <h3>
-              Islamic Daily
-            </h3>
-
-            <div class="muted">
-              @IslamicShorts
-            </div>
-
-          </div>
-
-        </div>
-
-        <div class="badge active-badge">
-          ● Active
-        </div>
-
-        <div class="muted">
-          Islamic reminders with golden theme.
-        </div>
-
-        <div class="theme-box">
-
-          <div class="theme-pill">
-            Golden Theme
-          </div>
-
-          <div class="theme-pill">
-            3 Uploads/day
-          </div>
-
-        </div>
-
-        <div class="actions">
-
-          <button class="btn primary">
-            Generate
-          </button>
-
-          <button class="btn warning">
-            Pause
-          </button>
-
-        </div>
-
-      </div>
-
-      <!-- CARD -->
-
-      <div class="card theme-dark">
-
-        <div class="project-head">
-
-          <div>
-
-            <h3>
-              Sigma Motivation
-            </h3>
-
-            <div class="muted">
-              Dark Motivation Theme
-            </div>
-
-          </div>
-
-        </div>
-
-        <div class="badge active-badge">
-          ● Active
-        </div>
-
-        <div class="muted">
-          Powerful motivational AI shorts.
-        </div>
-
-        <div class="theme-box">
-
-          <div class="theme-pill">
-            Dark Theme
-          </div>
-
-          <div class="theme-pill">
-            5 Uploads/day
-          </div>
-
-        </div>
-
-        <div class="actions">
-
-          <button class="btn primary">
-            Generate
-          </button>
-
-          <button class="btn danger">
-            Delete
-          </button>
-
-        </div>
-
-      </div>
-
-      <!-- CARD -->
-
-      <div class="card theme-neon">
-
-        <div class="project-head">
-
-          <div>
-
-            <h3>
-              Quiz Empire
-            </h3>
-
-            <div class="muted">
-              Viral Quiz Shorts
-            </div>
-
-          </div>
-
-        </div>
-
-        <div class="badge paused-badge">
-          ● Paused
-        </div>
-
-        <div class="muted">
-          Neon animated quiz shorts automation.
-        </div>
-
-        <div class="theme-box">
-
-          <div class="theme-pill">
-            Neon Theme
-          </div>
-
-          <div class="theme-pill">
-            2 Uploads/day
-          </div>
-
-        </div>
-
-        <div class="actions">
-
-          <button class="btn success">
-            Resume
-          </button>
-
-          <button class="btn danger">
-            Delete
-          </button>
-
-        </div>
-
-      </div>
-
-      <!-- CARD -->
-
-      <div class="card theme-minimal">
-
-        <div class="project-head">
-
-          <div>
-
-            <h3>
-              FactVerse
-            </h3>
-
-            <div class="muted">
-              Facts & Knowledge
-            </div>
-
-          </div>
-
-        </div>
-
-        <div class="badge active-badge">
-          ● Active
-        </div>
-
-        <div class="muted">
-          Clean aesthetic facts automation.
-        </div>
-
-        <div class="theme-box">
-
-          <div class="theme-pill">
-            Minimal Theme
-          </div>
-
-          <div class="theme-pill">
-            1 Upload/day
-          </div>
-
-        </div>
-
-        <div class="actions">
-
-          <button class="btn primary">
-            Generate
-          </button>
-
-          <button class="btn warning">
-            Pause
-          </button>
-
-        </div>
-
-      </div>
+      <div
+        class="grid"
+        id="projectsGrid"
+      ></div>
 
     </div>
 
   </div>
 
-</div>
+  <!-- MODAL -->
 
-<!-- MOBILE NAV -->
+  <div
+    class="modal hidden"
+    id="projectModal"
+  >
 
-<div class="mobile-nav">
+    <div class="modal-box">
 
-  <button>
-    🏠
-  </button>
+      <h2>
+        Create Project
+      </h2>
 
-  <button>
-    📺
-  </button>
+      <input
+        type="text"
+        id="projectName"
+        placeholder="Project Name"
+      />
 
-  <button>
-    📁
-  </button>
+      <select id="projectNiche">
 
-  <button>
-    ⚙️
-  </button>
+        <option value="islamic">
+          Islamic
+        </option>
 
-</div>
+        <option value="motivation">
+          Motivation
+        </option>
 
-<script>
+        <option value="quiz">
+          Quiz
+        </option>
 
-// =====================================
-// API
-// =====================================
+        <option value="facts">
+          Facts
+        </option>
 
-const API =
-'https://autotube-kajc.onrender.com/api'
+      </select>
 
-let token =
-localStorage.getItem('token') || ''
+      <select id="projectTheme">
 
-// =====================================
-// HELPERS
-// =====================================
+        <option value="golden">
+          Golden
+        </option>
 
-function toast(msg){
-  alert(msg)
-}
+        <option value="dark">
+          Dark
+        </option>
 
-function headers(){
+        <option value="neon">
+          Neon
+        </option>
 
-  return {
+        <option value="minimal">
+          Minimal
+        </option>
 
-    'Content-Type':'application/json',
+      </select>
 
-    Authorization:
-    `Bearer ${token}`
-  }
-}
+      <input
+        type="text"
+        id="projectTopics"
+        placeholder="sabar,quran,discipline"
+      />
 
-async function api(
-  url,
-  options={}
-){
+      <select id="projectPrivacy">
 
-  try{
+        <option value="public">
+          Public
+        </option>
 
-    const res =
-    await fetch(
-      API + url,
-      options
-    )
+        <option value="private">
+          Private
+        </option>
 
-    const data =
-    await res.json()
+        <option value="unlisted">
+          Unlisted
+        </option>
 
-    if(!res.ok){
+      </select>
 
-      throw new Error(
-        data.msg ||
-        'Request failed'
-      )
-    }
+      <select id="projectChannel"></select>
 
-    return data
+      <button onclick="createProject()">
+        Create
+      </button>
 
-  }catch(err){
+      <button onclick="closeProjectModal()">
+        Close
+      </button>
 
-    console.log(err)
+    </div>
 
-    toast(err.message)
-  }
-}
+  </div>
 
-// =====================================
-// AUTH
-// =====================================
-
-async function signup(){
-
-  const name =
-  prompt('Enter Name')
-
-  const email =
-  prompt('Enter Email')
-
-  const password =
-  prompt('Enter Password')
-
-  if(
-    !name ||
-    !email ||
-    !password
-  ) return
-
-  const data =
-  await api(
-
-    '/signup',
-
-    {
-
-      method:'POST',
-
-      headers:{
-
-        'Content-Type':'application/json'
-      },
-
-      body:JSON.stringify({
-
-        name,
-        email,
-        password
-
-      })
-    }
-  )
-
-  if(data?.token){
-
-    token = data.token
-
-    localStorage.setItem(
-      'token',
-      token
-    )
-
-    toast('Signup Success')
-
-    loadDashboard()
-  }
-}
-
-async function login(){
-
-  const email =
-  prompt('Enter Email')
-
-  const password =
-  prompt('Enter Password')
-
-  if(
-    !email ||
-    !password
-  ) return
-
-  const data =
-  await api(
-
-    '/login',
-
-    {
-
-      method:'POST',
-
-      headers:{
-
-        'Content-Type':'application/json'
-      },
-
-      body:JSON.stringify({
-
-        email,
-        password
-
-      })
-    }
-  )
-
-  if(data?.token){
-
-    token = data.token
-
-    localStorage.setItem(
-      'token',
-      token
-    )
-
-    toast('Login Success')
-
-    loadDashboard()
-  }
-}
-
-function logout(){
-
-  localStorage.removeItem('token')
-
-  location.reload()
-}
-
-// =====================================
-// LOAD DASHBOARD
-// =====================================
-
-async function loadDashboard(){
-
-  if(!token) return
-
-  const projects =
-  await api(
-
-    '/projects',
-
-    {
-      headers:headers()
-    }
-  )
-
-  console.log(projects)
-}
-
-// =====================================
-// YOUTUBE CONNECT
-// =====================================
-
-async function connectYouTube(){
-
-  const data =
-  await api(
-
-    '/youtube/connect',
-
-    {
-      headers:headers()
-    }
-  )
-
-  if(data?.url){
-
-    window.location.href =
-    data.url
-  }
-}
-
-// =====================================
-// OAUTH CALLBACK
-// =====================================
-
-async function handleOAuth(){
-
-  const params =
-  new URLSearchParams(
-    location.search
-  )
-
-  const code =
-  params.get('code')
-
-  if(!code || !token) return
-
-  const data =
-  await api(
-
-    '/youtube/callback',
-
-    {
-
-      method:'POST',
-
-      headers:headers(),
-
-      body:JSON.stringify({
-        code
-      })
-    }
-  )
-
-  if(data?.channel){
-
-    toast(
-      'YouTube Connected'
-    )
-
-    history.replaceState(
-      {},
-      document.title,
-      '/'
-    )
-  }
-}
-
-// =====================================
-// CREATE PROJECT
-// =====================================
-
-async function createProject(){
-
-  const name =
-  prompt('Project Name')
-
-  const niche =
-  prompt(
-    'Niche: motivation/islamic/quiz/facts'
-  )
-
-  const theme =
-  prompt(
-    'Theme: golden/dark/neon/minimal'
-  )
-
-  const topics =
-  prompt(
-    'Topics comma separated'
-  )
-
-  if(!name) return
-
-  const channels =
-  await api(
-
-    '/channels',
-
-    {
-      headers:headers()
-    }
-  )
-
-  const channelId =
-  channels?.channels?.[0]?._id
-
-  if(!channelId){
-
-    toast(
-      'Connect YouTube First'
-    )
-
-    return
-  }
-
-  const data =
-  await api(
-
-    '/projects',
-
-    {
-
-      method:'POST',
-
-      headers:headers(),
-
-      body:JSON.stringify({
-
-        name,
-
-        niche,
-
-        theme,
-
-        topics:
-        topics
-        ?.split(',')
-        .map(v=>v.trim()),
-
-        privacy:'public',
-
-        channelId
-
-      })
-    }
-  )
-
-  if(data?.project){
-
-    toast('Project Created')
-
-    location.reload()
-  }
-}
-
-// =====================================
-// AUTO START
-// =====================================
-
-handleOAuth()
-
-if(token){
-  loadDashboard()
-}
-
-</script>
+  <script src="script.js"></script>
 
 </body>
 </html>
