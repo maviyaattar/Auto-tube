@@ -1,7 +1,6 @@
-// =====================================
-// script.js
-// FULL STABLE VERSION
-// =====================================
+// =========================================
+// FULL UPDATED script.js
+// =========================================
 
 const API =
 'https://autotube-kajc.onrender.com/api'
@@ -9,9 +8,9 @@ const API =
 let token =
 localStorage.getItem('token') || ''
 
-// =====================================
+// =========================================
 // START
-// =====================================
+// =========================================
 
 window.addEventListener(
 
@@ -21,11 +20,19 @@ window.addEventListener(
 
     try{
 
+      // =========================
+      // HANDLE GOOGLE CALLBACK
+      // =========================
+
+      await handleOAuth()
+
+      // =========================
+      // LOAD DASHBOARD
+      // =========================
+
       if(token){
 
         showApp()
-
-        await handleOAuth()
 
         await loadDashboard()
       }
@@ -33,44 +40,26 @@ window.addEventListener(
     }catch(err){
 
       console.log(err)
-
-      logout()
     }
   }
 )
 
-// =====================================
+// =========================================
 // HELPERS
-// =====================================
+// =========================================
 
 function showLoader(){
 
-  const loader =
-  document.getElementById(
-    'loader'
-  )
-
-  if(loader){
-
-    loader.classList.remove(
-      'hidden'
-    )
-  }
+  document
+  .getElementById('loader')
+  ?.classList.remove('hidden')
 }
 
 function hideLoader(){
 
-  const loader =
-  document.getElementById(
-    'loader'
-  )
-
-  if(loader){
-
-    loader.classList.add(
-      'hidden'
-    )
-  }
+  document
+  .getElementById('loader')
+  ?.classList.add('hidden')
 }
 
 function toast(msg){
@@ -81,20 +70,12 @@ function toast(msg){
 function showApp(){
 
   document
-  .getElementById(
-    'authScreen'
-  )
-  ?.classList.add(
-    'hidden'
-  )
+  .getElementById('authScreen')
+  ?.classList.add('hidden')
 
   document
-  .getElementById(
-    'app'
-  )
-  ?.classList.remove(
-    'hidden'
-  )
+  .getElementById('app')
+  ?.classList.remove('hidden')
 }
 
 function headers(){
@@ -109,9 +90,9 @@ function headers(){
   }
 }
 
-// =====================================
+// =========================================
 // API
-// =====================================
+// =========================================
 
 async function api(
   url,
@@ -127,81 +108,61 @@ async function api(
 
       API + url,
 
-      {
-
-        ...options,
-
-        headers:{
-
-          ...(options.headers || {})
-        }
-      }
+      options
     )
 
     const contentType =
     response.headers.get(
       'content-type'
-    )
+    ) || ''
 
-    // =================================
-    // JSON RESPONSE
-    // =================================
+    let data
+
+    // =====================================
+    // JSON
+    // =====================================
 
     if(
-      contentType &&
       contentType.includes(
         'application/json'
       )
     ){
 
-      const data =
+      data =
       await response.json()
 
-      hideLoader()
+    }else{
 
-      if(!response.ok){
+      const text =
+      await response.text()
 
-        throw new Error(
-
-          data.msg ||
-          'Request failed'
-        )
-      }
-
-      return data
-    }
-
-    // =================================
-    // HTML / TEXT RESPONSE
-    // =================================
-
-    const text =
-    await response.text()
-
-    hideLoader()
-
-    console.log(
-      'NON JSON RESPONSE:',
-      text
-    )
-
-    if(
-      text.includes('<!DOCTYPE') ||
-      text.includes('<html')
-    ){
+      console.log(
+        'RAW RESPONSE:',
+        text
+      )
 
       throw new Error(
 
-        'Backend returned HTML. Backend crashed or wrong route.'
-
+        'Server returned non JSON response'
       )
     }
 
-    throw new Error(
+    hideLoader()
 
-      text ||
-      'Unknown server error'
-    )
+    // =====================================
+    // ERROR STATUS
+    // =====================================
+
+    if(!response.ok){
+
+      throw new Error(
+
+        data.msg ||
+        'Request failed'
+      )
+    }
+
+    return data
 
   }catch(err){
 
@@ -219,9 +180,9 @@ async function api(
   }
 }
 
-// =====================================
+// =========================================
 // SIGNUP
-// =====================================
+// =========================================
 
 async function signup(){
 
@@ -284,9 +245,7 @@ async function signup(){
     token = data.token
 
     localStorage.setItem(
-
       'token',
-
       token
     )
 
@@ -304,9 +263,9 @@ async function signup(){
   }
 }
 
-// =====================================
+// =========================================
 // LOGIN
-// =====================================
+// =========================================
 
 async function login(){
 
@@ -361,9 +320,7 @@ async function login(){
     token = data.token
 
     localStorage.setItem(
-
       'token',
-
       token
     )
 
@@ -381,9 +338,9 @@ async function login(){
   }
 }
 
-// =====================================
+// =========================================
 // LOGOUT
-// =====================================
+// =========================================
 
 function logout(){
 
@@ -396,13 +353,20 @@ function logout(){
   location.href = '/'
 }
 
-// =====================================
+// =========================================
 // CONNECT YOUTUBE
-// =====================================
+// =========================================
 
 async function connectYouTube(){
 
   try{
+
+    if(!token){
+
+      return toast(
+        'Login first'
+      )
+    }
 
     const data =
     await api(
@@ -432,9 +396,9 @@ async function connectYouTube(){
   }
 }
 
-// =====================================
-// GOOGLE CALLBACK
-// =====================================
+// =========================================
+// HANDLE GOOGLE CALLBACK
+// =========================================
 
 async function handleOAuth(){
 
@@ -442,13 +406,42 @@ async function handleOAuth(){
 
     const params =
     new URLSearchParams(
-      location.search
+      window.location.search
     )
 
     const code =
     params.get('code')
 
-    if(!code) return
+    // =============================
+    // NO CODE
+    // =============================
+
+    if(!code){
+
+      console.log(
+        'No OAuth code'
+      )
+
+      return
+    }
+
+    // =============================
+    // NOT LOGGED IN
+    // =============================
+
+    if(!token){
+
+      toast(
+        'Please login first'
+      )
+
+      return
+    }
+
+    console.log(
+      'OAuth Code:',
+      code
+    )
 
     const data =
     await api(
@@ -468,13 +461,19 @@ async function handleOAuth(){
       }
     )
 
+    console.log(data)
+
     if(data){
 
       toast(
-        'YouTube Connected'
+        'YouTube Connected Successfully'
       )
 
-      history.replaceState(
+      // ===========================
+      // REMOVE QUERY PARAMS
+      // ===========================
+
+      window.history.replaceState(
 
         {},
 
@@ -490,9 +489,9 @@ async function handleOAuth(){
   }
 }
 
-// =====================================
+// =========================================
 // LOAD DASHBOARD
-// =====================================
+// =========================================
 
 async function loadDashboard(){
 
@@ -527,7 +526,9 @@ async function loadDashboard(){
     if(
       !channelsRes ||
       !projectsRes
-    ) return
+    ){
+      return
+    }
 
     renderChannels(
 
@@ -550,9 +551,9 @@ async function loadDashboard(){
   }
 }
 
-// =====================================
+// =========================================
 // RENDER CHANNELS
-// =====================================
+// =========================================
 
 function renderChannels(
   channels
@@ -607,9 +608,9 @@ function renderChannels(
   })
 }
 
-// =====================================
+// =========================================
 // RENDER PROJECTS
-// =====================================
+// =========================================
 
 function renderProjects(
   projects
@@ -630,7 +631,7 @@ function renderProjects(
 
     <div class="empty">
 
-      No projects found
+      No projects created
 
     </div>
 
@@ -648,7 +649,6 @@ function renderProjects(
       <div class="badge ${project.status}">
 
         ${project.status}
-
       </div>
 
       <h3>
@@ -680,9 +680,9 @@ function renderProjects(
   })
 }
 
-// =====================================
-// MODAL
-// =====================================
+// =========================================
+// OPEN MODAL
+// =========================================
 
 function openModal(){
 
@@ -695,6 +695,10 @@ function openModal(){
   )
 }
 
+// =========================================
+// CLOSE MODAL
+// =========================================
+
 function closeModal(){
 
   document
@@ -706,9 +710,9 @@ function closeModal(){
   )
 }
 
-// =====================================
-// CHANNEL SELECT
-// =====================================
+// =========================================
+// FILL CHANNEL SELECT
+// =========================================
 
 function fillChannelSelect(
   channels
@@ -737,9 +741,9 @@ function fillChannelSelect(
   })
 }
 
-// =====================================
+// =========================================
 // CREATE PROJECT
-// =====================================
+// =========================================
 
 async function createProject(){
 
@@ -827,7 +831,7 @@ async function createProject(){
     if(!data) return
 
     toast(
-      'Project Created'
+      'Project Created Successfully'
     )
 
     closeModal()
