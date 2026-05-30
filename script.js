@@ -1,4 +1,7 @@
+// =====================================
 // script.js
+// FULL STABLE VERSION
+// =====================================
 
 const API =
 'https://autotube-kajc.onrender.com/api'
@@ -10,26 +13,31 @@ localStorage.getItem('token') || ''
 // START
 // =====================================
 
-window.onload = async ()=>{
+window.addEventListener(
 
-  try{
+  'load',
 
-    if(token){
+  async ()=>{
 
-      showApp()
+    try{
 
-      await handleOAuth()
+      if(token){
 
-      await loadDashboard()
+        showApp()
+
+        await handleOAuth()
+
+        await loadDashboard()
+      }
+
+    }catch(err){
+
+      console.log(err)
+
+      logout()
     }
-
-  }catch(err){
-
-    console.log(err)
-
-    logout()
   }
-}
+)
 
 // =====================================
 // HELPERS
@@ -37,16 +45,32 @@ window.onload = async ()=>{
 
 function showLoader(){
 
-  document
-  .getElementById('loader')
-  ?.classList.remove('hidden')
+  const loader =
+  document.getElementById(
+    'loader'
+  )
+
+  if(loader){
+
+    loader.classList.remove(
+      'hidden'
+    )
+  }
 }
 
 function hideLoader(){
 
-  document
-  .getElementById('loader')
-  ?.classList.add('hidden')
+  const loader =
+  document.getElementById(
+    'loader'
+  )
+
+  if(loader){
+
+    loader.classList.add(
+      'hidden'
+    )
+  }
 }
 
 function toast(msg){
@@ -57,19 +81,28 @@ function toast(msg){
 function showApp(){
 
   document
-  .getElementById('authScreen')
-  ?.classList.add('hidden')
+  .getElementById(
+    'authScreen'
+  )
+  ?.classList.add(
+    'hidden'
+  )
 
   document
-  .getElementById('app')
-  ?.classList.remove('hidden')
+  .getElementById(
+    'app'
+  )
+  ?.classList.remove(
+    'hidden'
+  )
 }
 
 function headers(){
 
   return {
 
-    'Content-Type':'application/json',
+    'Content-Type':
+    'application/json',
 
     Authorization:
     `Bearer ${token}`
@@ -77,7 +110,7 @@ function headers(){
 }
 
 // =====================================
-// API HANDLER
+// API
 // =====================================
 
 async function api(
@@ -89,45 +122,86 @@ async function api(
 
     showLoader()
 
-    const res =
+    const response =
     await fetch(
 
       API + url,
 
-      options
+      {
+
+        ...options,
+
+        headers:{
+
+          ...(options.headers || {})
+        }
+      }
     )
 
-    const text =
-    await res.text()
+    const contentType =
+    response.headers.get(
+      'content-type'
+    )
 
-    let data
+    // =================================
+    // JSON RESPONSE
+    // =================================
 
-    try{
-
-      data = JSON.parse(text)
-
-    }catch{
-
-      console.log(text)
-
-      throw new Error(
-
-        'Invalid server response'
+    if(
+      contentType &&
+      contentType.includes(
+        'application/json'
       )
+    ){
+
+      const data =
+      await response.json()
+
+      hideLoader()
+
+      if(!response.ok){
+
+        throw new Error(
+
+          data.msg ||
+          'Request failed'
+        )
+      }
+
+      return data
     }
+
+    // =================================
+    // HTML / TEXT RESPONSE
+    // =================================
+
+    const text =
+    await response.text()
 
     hideLoader()
 
-    if(!res.ok){
+    console.log(
+      'NON JSON RESPONSE:',
+      text
+    )
+
+    if(
+      text.includes('<!DOCTYPE') ||
+      text.includes('<html')
+    ){
 
       throw new Error(
 
-        data.msg ||
-        'Request failed'
+        'Backend returned HTML. Backend crashed or wrong route.'
+
       )
     }
 
-    return data
+    throw new Error(
+
+      text ||
+      'Unknown server error'
+    )
 
   }catch(err){
 
@@ -146,7 +220,7 @@ async function api(
 }
 
 // =====================================
-// AUTH
+// SIGNUP
 // =====================================
 
 async function signup(){
@@ -192,7 +266,8 @@ async function signup(){
         method:'POST',
 
         headers:{
-          'Content-Type':'application/json'
+          'Content-Type':
+          'application/json'
         },
 
         body:JSON.stringify({
@@ -209,7 +284,9 @@ async function signup(){
     token = data.token
 
     localStorage.setItem(
+
       'token',
+
       token
     )
 
@@ -224,10 +301,12 @@ async function signup(){
   }catch(err){
 
     console.log(err)
-
-    toast(err.message)
   }
 }
+
+// =====================================
+// LOGIN
+// =====================================
 
 async function login(){
 
@@ -265,7 +344,8 @@ async function login(){
         method:'POST',
 
         headers:{
-          'Content-Type':'application/json'
+          'Content-Type':
+          'application/json'
         },
 
         body:JSON.stringify({
@@ -281,7 +361,9 @@ async function login(){
     token = data.token
 
     localStorage.setItem(
+
       'token',
+
       token
     )
 
@@ -296,10 +378,12 @@ async function login(){
   }catch(err){
 
     console.log(err)
-
-    toast(err.message)
   }
 }
+
+// =====================================
+// LOGOUT
+// =====================================
 
 function logout(){
 
@@ -307,11 +391,13 @@ function logout(){
     'token'
   )
 
+  token = ''
+
   location.href = '/'
 }
 
 // =====================================
-// YOUTUBE CONNECT
+// CONNECT YOUTUBE
 // =====================================
 
 async function connectYouTube(){
@@ -324,6 +410,8 @@ async function connectYouTube(){
       '/youtube/connect',
 
       {
+
+        method:'GET',
 
         headers:headers()
       }
@@ -341,8 +429,6 @@ async function connectYouTube(){
   }catch(err){
 
     console.log(err)
-
-    toast(err.message)
   }
 }
 
@@ -385,7 +471,7 @@ async function handleOAuth(){
     if(data){
 
       toast(
-        'YouTube Connected Successfully'
+        'YouTube Connected'
       )
 
       history.replaceState(
@@ -401,13 +487,11 @@ async function handleOAuth(){
   }catch(err){
 
     console.log(err)
-
-    toast(err.message)
   }
 }
 
 // =====================================
-// DASHBOARD
+// LOAD DASHBOARD
 // =====================================
 
 async function loadDashboard(){
@@ -421,6 +505,8 @@ async function loadDashboard(){
 
       {
 
+        method:'GET',
+
         headers:headers()
       }
     )
@@ -432,35 +518,40 @@ async function loadDashboard(){
 
       {
 
+        method:'GET',
+
         headers:headers()
       }
     )
 
-    if(!channelsRes || !projectsRes)
-    return
+    if(
+      !channelsRes ||
+      !projectsRes
+    ) return
 
     renderChannels(
+
       channelsRes.channels || []
     )
 
     renderProjects(
+
       projectsRes.projects || []
     )
 
     fillChannelSelect(
+
       channelsRes.channels || []
     )
 
   }catch(err){
 
     console.log(err)
-
-    toast(err.message)
   }
 }
 
 // =====================================
-// CHANNELS
+// RENDER CHANNELS
 // =====================================
 
 function renderChannels(
@@ -482,7 +573,7 @@ function renderChannels(
 
     <div class="empty">
 
-      No Channels Connected
+      No channels connected
 
     </div>
 
@@ -517,7 +608,7 @@ function renderChannels(
 }
 
 // =====================================
-// PROJECTS
+// RENDER PROJECTS
 // =====================================
 
 function renderProjects(
@@ -539,7 +630,7 @@ function renderProjects(
 
     <div class="empty">
 
-      No Projects Yet
+      No projects found
 
     </div>
 
@@ -599,7 +690,9 @@ function openModal(){
   .getElementById(
     'projectModal'
   )
-  ?.classList.remove('hidden')
+  ?.classList.remove(
+    'hidden'
+  )
 }
 
 function closeModal(){
@@ -608,11 +701,13 @@ function closeModal(){
   .getElementById(
     'projectModal'
   )
-  ?.classList.add('hidden')
+  ?.classList.add(
+    'hidden'
+  )
 }
 
 // =====================================
-// FILL CHANNEL SELECT
+// CHANNEL SELECT
 // =====================================
 
 function fillChannelSelect(
@@ -729,21 +824,18 @@ async function createProject(){
       }
     )
 
-    if(data){
+    if(!data) return
 
-      toast(
-        'Project Created'
-      )
+    toast(
+      'Project Created'
+    )
 
-      closeModal()
+    closeModal()
 
-      await loadDashboard()
-    }
+    await loadDashboard()
 
   }catch(err){
 
     console.log(err)
-
-    toast(err.message)
   }
 }
