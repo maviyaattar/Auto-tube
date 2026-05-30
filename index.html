@@ -966,21 +966,23 @@ body::before{
 
 <script>
 
-const API = 'https://autotube-kajc.onrender.com/api'
+// =====================================
+// API
+// =====================================
 
-let token = localStorage.getItem('token') || ''
+const API =
+'https://autotube-kajc.onrender.com/api'
+
+let token =
+localStorage.getItem('token') || ''
 
 // =====================================
-// SIMPLE TOAST
+// HELPERS
 // =====================================
 
 function toast(msg){
   alert(msg)
 }
-
-// =====================================
-// AUTH HEADERS
-// =====================================
 
 function headers(){
 
@@ -988,43 +990,192 @@ function headers(){
 
     'Content-Type':'application/json',
 
-    Authorization:`Bearer ${token}`
+    Authorization:
+    `Bearer ${token}`
   }
 }
 
-// =====================================
-// FETCH HELPER
-// =====================================
-
-async function api(url,options={}){
+async function api(
+  url,
+  options={}
+){
 
   try{
 
-    const res = await fetch(API + url,options)
+    const res =
+    await fetch(
+      API + url,
+      options
+    )
 
-    const data = await res.json()
+    const data =
+    await res.json()
 
     if(!res.ok){
-      throw new Error(data.msg || 'Request failed')
+
+      throw new Error(
+        data.msg ||
+        'Request failed'
+      )
     }
 
     return data
 
   }catch(err){
 
-    toast(err.message)
-
     console.log(err)
+
+    toast(err.message)
   }
 }
 
 // =====================================
-// CONNECT YOUTUBE
+// AUTH
+// =====================================
+
+async function signup(){
+
+  const name =
+  prompt('Enter Name')
+
+  const email =
+  prompt('Enter Email')
+
+  const password =
+  prompt('Enter Password')
+
+  if(
+    !name ||
+    !email ||
+    !password
+  ) return
+
+  const data =
+  await api(
+
+    '/signup',
+
+    {
+
+      method:'POST',
+
+      headers:{
+
+        'Content-Type':'application/json'
+      },
+
+      body:JSON.stringify({
+
+        name,
+        email,
+        password
+
+      })
+    }
+  )
+
+  if(data?.token){
+
+    token = data.token
+
+    localStorage.setItem(
+      'token',
+      token
+    )
+
+    toast('Signup Success')
+
+    loadDashboard()
+  }
+}
+
+async function login(){
+
+  const email =
+  prompt('Enter Email')
+
+  const password =
+  prompt('Enter Password')
+
+  if(
+    !email ||
+    !password
+  ) return
+
+  const data =
+  await api(
+
+    '/login',
+
+    {
+
+      method:'POST',
+
+      headers:{
+
+        'Content-Type':'application/json'
+      },
+
+      body:JSON.stringify({
+
+        email,
+        password
+
+      })
+    }
+  )
+
+  if(data?.token){
+
+    token = data.token
+
+    localStorage.setItem(
+      'token',
+      token
+    )
+
+    toast('Login Success')
+
+    loadDashboard()
+  }
+}
+
+function logout(){
+
+  localStorage.removeItem('token')
+
+  location.reload()
+}
+
+// =====================================
+// LOAD DASHBOARD
+// =====================================
+
+async function loadDashboard(){
+
+  if(!token) return
+
+  const projects =
+  await api(
+
+    '/projects',
+
+    {
+      headers:headers()
+    }
+  )
+
+  console.log(projects)
+}
+
+// =====================================
+// YOUTUBE CONNECT
 // =====================================
 
 async function connectYouTube(){
 
-  const data = await api(
+  const data =
+  await api(
 
     '/youtube/connect',
 
@@ -1035,85 +1186,9 @@ async function connectYouTube(){
 
   if(data?.url){
 
-    window.location.href = data.url
+    window.location.href =
+    data.url
   }
-}
-
-// =====================================
-// CREATE PROJECT
-// =====================================
-
-async function createProject(){
-
-  const body = {
-
-    name:'Demo Project',
-
-    niche:'motivation',
-
-    topics:['success','discipline'],
-
-    theme:'dark',
-
-    privacy:'public'
-  }
-
-  const data = await api(
-
-    '/projects',
-
-    {
-
-      method:'POST',
-
-      headers:headers(),
-
-      body:JSON.stringify(body)
-    }
-  )
-
-  if(data?.project){
-
-    toast('Project Created')
-  }
-}
-
-// =====================================
-// GET PROJECTS
-// =====================================
-
-async function getProjects(){
-
-  const data = await api(
-
-    '/projects',
-
-    {
-      headers:headers()
-    }
-  )
-
-  console.log(data)
-}
-
-// =====================================
-// GENERATE VIDEO
-// =====================================
-
-async function generateVideo(){
-
-  toast('Automation Running In Backend')
-}
-
-// =====================================
-// LOGOUT
-// =====================================
-
-function logout(){
-
-  localStorage.removeItem('token')
-
-  location.reload()
 }
 
 // =====================================
@@ -1127,11 +1202,13 @@ async function handleOAuth(){
     location.search
   )
 
-  const code = params.get('code')
+  const code =
+  params.get('code')
 
   if(!code || !token) return
 
-  const data = await api(
+  const data =
+  await api(
 
     '/youtube/callback',
 
@@ -1149,9 +1226,11 @@ async function handleOAuth(){
 
   if(data?.channel){
 
-    toast('YouTube Connected')
+    toast(
+      'YouTube Connected'
+    )
 
-    window.history.replaceState(
+    history.replaceState(
       {},
       document.title,
       '/'
@@ -1159,7 +1238,103 @@ async function handleOAuth(){
   }
 }
 
+// =====================================
+// CREATE PROJECT
+// =====================================
+
+async function createProject(){
+
+  const name =
+  prompt('Project Name')
+
+  const niche =
+  prompt(
+    'Niche: motivation/islamic/quiz/facts'
+  )
+
+  const theme =
+  prompt(
+    'Theme: golden/dark/neon/minimal'
+  )
+
+  const topics =
+  prompt(
+    'Topics comma separated'
+  )
+
+  if(!name) return
+
+  const channels =
+  await api(
+
+    '/channels',
+
+    {
+      headers:headers()
+    }
+  )
+
+  const channelId =
+  channels?.channels?.[0]?._id
+
+  if(!channelId){
+
+    toast(
+      'Connect YouTube First'
+    )
+
+    return
+  }
+
+  const data =
+  await api(
+
+    '/projects',
+
+    {
+
+      method:'POST',
+
+      headers:headers(),
+
+      body:JSON.stringify({
+
+        name,
+
+        niche,
+
+        theme,
+
+        topics:
+        topics
+        ?.split(',')
+        .map(v=>v.trim()),
+
+        privacy:'public',
+
+        channelId
+
+      })
+    }
+  )
+
+  if(data?.project){
+
+    toast('Project Created')
+
+    location.reload()
+  }
+}
+
+// =====================================
+// AUTO START
+// =====================================
+
 handleOAuth()
+
+if(token){
+  loadDashboard()
+}
 
 </script>
 
