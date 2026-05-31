@@ -1,11 +1,8 @@
 <!-- index.html -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
   <meta charset="UTF-8" />
-
   <meta
     name="viewport"
     content="width=device-width, initial-scale=1.0"
@@ -17,261 +14,269 @@
     rel="stylesheet"
     href="./style.css"
   />
-
 </head>
 <body>
 
+  <!-- ========================= -->
   <!-- LOADER -->
+  <!-- ========================= -->
 
-  <div
-    id="loader"
-    class="loader hidden"
-  >
-    Loading...
+  <div id="loader" class="loader">
+    <div class="spinner"></div>
   </div>
 
+  <!-- ========================= -->
   <!-- AUTH -->
+  <!-- ========================= -->
 
-  <div
-    class="auth-screen"
-    id="authScreen"
-  >
+  <section id="authSection" class="auth-section">
 
     <div class="auth-card">
 
-      <h1>
-        AutoTube AI 🚀
-      </h1>
+      <h1>AutoTube AI 🚀</h1>
 
       <p>
         AI Shorts Automation SaaS
       </p>
 
-      <input
-        type="text"
-        id="name"
-        placeholder="Name"
-      />
-
-      <input
-        type="email"
-        id="email"
-        placeholder="Email"
-      />
-
-      <input
-        type="password"
-        id="password"
-        placeholder="Password"
-      />
-
-      <button onclick="signup()">
-        Signup
-      </button>
-
-      <button onclick="login()">
-        Login
-      </button>
-
-    </div>
-
-  </div>
-
-  <!-- APP -->
-
-  <div
-    class="app hidden"
-    id="app"
-  >
-
-    <!-- SIDEBAR -->
-
-    <aside class="sidebar">
-
-      <div>
-
-        <div class="logo">
-          AutoTube
-        </div>
-
-        <button onclick="loadDashboard()">
-          Dashboard
-        </button>
-
-        <button onclick="connectYouTube()">
-          Connect Channel
-        </button>
-
-        <button onclick="openModal()">
-          Create Project
-        </button>
-
-      </div>
-
-      <button
-        class="logout-btn"
-        onclick="logout()"
-      >
-        Logout
-      </button>
-
-    </aside>
-
-    <!-- MAIN -->
-
-    <main class="main">
-
-      <div class="topbar">
-
-        <div>
-
-          <h1>
-            Dashboard 🚀
-          </h1>
-
-          <p>
-            AI Shorts SaaS Platform
-          </p>
-
-        </div>
-
-      </div>
-
-      <!-- CHANNELS -->
-
-      <section>
-
-        <div class="section-title">
-          Channels
-        </div>
-
-        <div
-          class="grid"
-          id="channelsGrid"
-        ></div>
-
-      </section>
-
-      <!-- PROJECTS -->
-
-      <section>
-
-        <div class="section-title">
-          Projects
-        </div>
-
-        <div
-          class="grid"
-          id="projectsGrid"
-        ></div>
-
-      </section>
-
-    </main>
-
-  </div>
-
-  <!-- MODAL -->
-
-  <div
-    class="modal hidden"
-    id="projectModal"
-  >
-
-    <div class="modal-card">
-
-      <h2>
-        Create Project
-      </h2>
-
-      <input
-        type="text"
-        id="projectName"
-        placeholder="Project Name"
-      />
-
-      <select id="projectNiche">
-
-        <option value="islamic">
-          Islamic
-        </option>
-
-        <option value="motivation">
-          Motivation
-        </option>
-
-        <option value="quiz">
-          Quiz
-        </option>
-
-        <option value="facts">
-          Facts
-        </option>
-
-      </select>
-
-      <select id="projectTheme">
-
-        <option value="golden">
-          Golden
-        </option>
-
-        <option value="dark">
-          Dark
-        </option>
-
-        <option value="neon">
-          Neon
-        </option>
-
-        <option value="minimal">
-          Minimal
-        </option>
-
-      </select>
-
-      <input
-        type="text"
-        id="projectTopics"
-        placeholder="sabar,quran,discipline"
-      />
-
-      <select id="projectPrivacy">
-
-        <option value="public">
-          Public
-        </option>
-
-        <option value="private">
-          Private
-        </option>
-
-        <option value="unlisted">
-          Unlisted
-        </option>
-
-      </select>
-
-      <select id="projectChannel"></select>
-
-      <div class="modal-actions">
-
-        <button onclick="createProject()">
-          Create
+      <div class="tabs">
+
+        <button
+          id="loginTab"
+          class="active"
+        >
+          Login
         </button>
 
         <button
-          class="danger"
-          onclick="closeModal()"
+          id="signupTab"
         >
-          Close
+          Signup
         </button>
+
+      </div>
+
+      <!-- LOGIN -->
+
+      <form id="loginForm">
+
+        <input
+          type="email"
+          id="loginEmail"
+          placeholder="Email"
+          required
+        />
+
+        <input
+          type="password"
+          id="loginPassword"
+          placeholder="Password"
+          required
+        />
+
+        <button type="submit">
+          Login
+        </button>
+
+      </form>
+
+      <!-- SIGNUP -->
+
+      <form
+        id="signupForm"
+        class="hidden"
+      >
+
+        <input
+          type="text"
+          id="signupName"
+          placeholder="Name"
+          required
+        />
+
+        <input
+          type="email"
+          id="signupEmail"
+          placeholder="Email"
+          required
+        />
+
+        <input
+          type="password"
+          id="signupPassword"
+          placeholder="Password"
+          required
+        />
+
+        <button type="submit">
+          Signup
+        </button>
+
+      </form>
+
+    </div>
+
+  </section>
+
+  <!-- ========================= -->
+  <!-- DASHBOARD -->
+  <!-- ========================= -->
+
+  <section
+    id="dashboardSection"
+    class="hidden"
+  >
+
+    <!-- NAVBAR -->
+
+    <nav class="navbar">
+
+      <h2>AutoTube</h2>
+
+      <div class="nav-buttons">
+
+        <button
+          id="connectBtn"
+        >
+          Connect Channel
+        </button>
+
+        <button
+          id="logoutBtn"
+          class="danger"
+        >
+          Logout
+        </button>
+
+      </div>
+
+    </nav>
+
+    <!-- CONTENT -->
+
+    <div class="dashboard">
+
+      <!-- CHANNELS -->
+
+      <div class="card">
+
+        <h3>Channels</h3>
+
+        <div id="channels">
+          No Channels
+        </div>
+
+      </div>
+
+      <!-- CREATE PROJECT -->
+
+      <div class="card">
+
+        <h3>Create Project</h3>
+
+        <form id="projectForm">
+
+          <input
+            type="text"
+            id="projectName"
+            placeholder="Project Name"
+            required
+          />
+
+          <select id="niche">
+
+            <option value="islamic">
+              Islamic
+            </option>
+
+            <option value="motivation">
+              Motivation
+            </option>
+
+            <option value="quiz">
+              Quiz
+            </option>
+
+            <option value="facts">
+              Facts
+            </option>
+
+          </select>
+
+          <input
+            type="text"
+            id="topics"
+            placeholder="Topics (comma separated)"
+          />
+
+          <select id="theme">
+
+            <option value="golden">
+              Golden
+            </option>
+
+            <option value="dark">
+              Dark
+            </option>
+
+            <option value="neon">
+              Neon
+            </option>
+
+            <option value="premium">
+              Premium
+            </option>
+
+          </select>
+
+          <select id="privacy">
+
+            <option value="public">
+              Public
+            </option>
+
+            <option value="private">
+              Private
+            </option>
+
+            <option value="unlisted">
+              Unlisted
+            </option>
+
+          </select>
+
+          <input
+            type="time"
+            id="uploadTime"
+            required
+          />
+
+          <select id="channelSelect">
+          </select>
+
+          <button type="submit">
+            Create Project
+          </button>
+
+        </form>
+
+      </div>
+
+      <!-- PROJECTS -->
+
+      <div class="card">
+
+        <h3>Projects</h3>
+
+        <div id="projects">
+          No Projects
+        </div>
 
       </div>
 
     </div>
 
-  </div>
+  </section>
 
   <script src="./script.js"></script>
 
