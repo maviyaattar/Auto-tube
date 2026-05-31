@@ -1,5 +1,5 @@
 // =========================================
-// FULL script.js WITH PAGE DEBUG
+// FINAL CLEAN WORKING script.js
 // =========================================
 
 const API =
@@ -18,109 +18,52 @@ window.addEventListener(
 
   async ()=>{
 
-    try{
+    if(token){
 
-      await handleOAuth()
+      showApp()
 
-      if(token){
-
-        showApp()
-
-        await loadDashboard()
-      }
-
-    }catch(err){
-
-      showDebug(
-        err.message,
-        true
-      )
+      await loadDashboard()
     }
+
+    await handleOAuth()
   }
 )
-
-// =========================================
-// DEBUG BOX
-// =========================================
-
-function showDebug(
-  text,
-  isError=false
-){
-
-  let debug =
-  document.getElementById(
-    'debugBox'
-  )
-
-  if(!debug){
-
-    debug =
-    document.createElement('div')
-
-    debug.id = 'debugBox'
-
-    debug.style.position = 'fixed'
-    debug.style.top = '0'
-    debug.style.left = '0'
-    debug.style.width = '100%'
-    debug.style.height = '100%'
-    debug.style.background = '#000'
-    debug.style.color =
-    isError ? 'red' : '#00ff88'
-
-    debug.style.zIndex = '999999'
-    debug.style.padding = '20px'
-    debug.style.overflow = 'auto'
-    debug.style.whiteSpace = 'pre-wrap'
-    debug.style.wordBreak = 'break-word'
-    debug.style.fontSize = '14px'
-
-    document.body.appendChild(
-      debug
-    )
-  }
-
-  debug.innerHTML += `
-
-====================================
-
-${text}
-
-====================================
-
-`
-}
 
 // =========================================
 // HELPERS
 // =========================================
 
+function toast(msg){
+
+  alert(msg)
+}
+
 function showLoader(){
 
-  document
-  .getElementById(
+  const loader =
+  document.getElementById(
     'loader'
   )
-  ?.classList.remove(
-    'hidden'
-  )
+
+  if(loader){
+
+    loader.style.display =
+    'flex'
+  }
 }
 
 function hideLoader(){
 
-  document
-  .getElementById(
+  const loader =
+  document.getElementById(
     'loader'
   )
-  ?.classList.add(
-    'hidden'
-  )
-}
 
-function toast(msg){
+  if(loader){
 
-  alert(msg)
+    loader.style.display =
+    'none'
+  }
 }
 
 function showApp(){
@@ -175,46 +118,23 @@ async function api(
       options
     )
 
-    const raw =
+    const text =
     await response.text()
 
     hideLoader()
 
-    showDebug(
-
-`URL:
-${API + url}
-
-STATUS:
-${response.status}
-
-RESPONSE:
-
-${raw}
-
-`
-    )
-
-    // =====================================
-    // TRY JSON
-    // =====================================
-
-    let data
+    let data = {}
 
     try{
 
-      data = JSON.parse(raw)
+      data = JSON.parse(text)
 
     }catch{
 
       throw new Error(
-        'Response is not JSON'
+        text || 'Invalid server response'
       )
     }
-
-    // =====================================
-    // STATUS ERROR
-    // =====================================
 
     if(!response.ok){
 
@@ -231,11 +151,10 @@ ${raw}
 
     hideLoader()
 
-    showDebug(
+    console.log(err)
 
-      err.message,
-
-      true
+    toast(
+      err.message
     )
 
     return null
@@ -309,13 +228,13 @@ async function signup(){
     token
   )
 
-  toast(
-    'Signup Success'
-  )
-
   showApp()
 
   await loadDashboard()
+
+  toast(
+    'Signup Success'
+  )
 }
 
 // =========================================
@@ -377,13 +296,13 @@ async function login(){
     token
   )
 
-  toast(
-    'Login Success'
-  )
-
   showApp()
 
   await loadDashboard()
+
+  toast(
+    'Login Success'
+  )
 }
 
 // =========================================
@@ -396,9 +315,55 @@ function logout(){
     'token'
   )
 
-  token = ''
+  location.reload()
+}
 
-  location.href = '/'
+// =========================================
+// LOAD DASHBOARD
+// =========================================
+
+async function loadDashboard(){
+
+  const channelsRes =
+  await api(
+
+    '/api/channels'.replace('/api',''),
+
+    {
+
+      method:'GET',
+
+      headers:headers()
+    }
+  )
+
+  const projectsRes =
+  await api(
+
+    '/api/projects'.replace('/api',''),
+
+    {
+
+      method:'GET',
+
+      headers:headers()
+    }
+  )
+
+  renderChannels(
+
+    channelsRes?.channels || []
+  )
+
+  renderProjects(
+
+    projectsRes?.projects || []
+  )
+
+  fillChannelSelect(
+
+    channelsRes?.channels || []
+  )
 }
 
 // =========================================
@@ -406,13 +371,6 @@ function logout(){
 // =========================================
 
 async function connectYouTube(){
-
-  if(!token){
-
-    return toast(
-      'Login first'
-    )
-  }
 
   const data =
   await api(
@@ -445,33 +403,20 @@ async function handleOAuth(){
 
   const params =
   new URLSearchParams(
-    location.search
+    window.location.search
   )
 
   const code =
   params.get('code')
 
-  if(!code){
-
-    showDebug(
-      'No OAuth code found'
-    )
-
-    return
-  }
+  if(!code) return
 
   if(!token){
 
-    showDebug(
-      'No token found'
+    return toast(
+      'Please login first'
     )
-
-    return
   }
-
-  showDebug(
-    'OAuth code found'
-  )
 
   const data =
   await api(
@@ -491,77 +436,26 @@ async function handleOAuth(){
     }
   )
 
-  if(data){
+  if(!data) return
 
-    toast(
-      'YouTube Connected'
-    )
+  toast(
+    'YouTube Connected'
+  )
 
-    history.replaceState(
+  window.history.replaceState(
 
-      {},
+    {},
 
-      document.title,
+    document.title,
 
-      '/'
-    )
-  }
+    '/'
+  )
+
+  await loadDashboard()
 }
 
 // =========================================
-// DASHBOARD
-// =========================================
-
-async function loadDashboard(){
-
-  const channelsRes =
-  await api(
-
-    '/channels',
-
-    {
-
-      method:'GET',
-
-      headers:headers()
-    }
-  )
-
-  const projectsRes =
-  await api(
-
-    '/projects',
-
-    {
-
-      method:'GET',
-
-      headers:headers()
-    }
-  )
-
-  if(
-    !channelsRes ||
-    !projectsRes
-  ){
-    return
-  }
-
-  renderChannels(
-    channelsRes.channels || []
-  )
-
-  renderProjects(
-    projectsRes.projects || []
-  )
-
-  fillChannelSelect(
-    channelsRes.channels || []
-  )
-}
-
-// =========================================
-// CHANNELS
+// RENDER CHANNELS
 // =========================================
 
 function renderChannels(
@@ -577,10 +471,24 @@ function renderChannels(
 
   grid.innerHTML = ''
 
+  if(!channels.length){
+
+    grid.innerHTML =
+
+    `
+    <div class="empty">
+      No channels connected
+    </div>
+    `
+
+    return
+  }
+
   channels.forEach(channel=>{
 
-    grid.innerHTML += `
+    grid.innerHTML +=
 
+    `
     <div class="card">
 
       <img
@@ -592,18 +500,55 @@ function renderChannels(
         ${channel.channelTitle}
       </h3>
 
-      <p>
-        ${channel.email}
-      </p>
+      <button
+        onclick="deleteChannel('${channel._id}')"
+      >
+        Disconnect
+      </button>
 
     </div>
-
     `
   })
 }
 
 // =========================================
-// PROJECTS
+// DELETE CHANNEL
+// =========================================
+
+async function deleteChannel(id){
+
+  if(
+    !confirm(
+      'Disconnect channel?'
+    )
+  ){
+    return
+  }
+
+  const data =
+  await api(
+
+    `/channels/${id}`,
+
+    {
+
+      method:'DELETE',
+
+      headers:headers()
+    }
+  )
+
+  if(!data) return
+
+  toast(
+    'Channel disconnected'
+  )
+
+  await loadDashboard()
+}
+
+// =========================================
+// RENDER PROJECTS
 // =========================================
 
 function renderProjects(
@@ -619,11 +564,31 @@ function renderProjects(
 
   grid.innerHTML = ''
 
+  if(!projects.length){
+
+    grid.innerHTML =
+
+    `
+    <div class="empty">
+      No projects yet
+    </div>
+    `
+
+    return
+  }
+
   projects.forEach(project=>{
 
-    grid.innerHTML += `
+    grid.innerHTML +=
 
+    `
     <div class="card">
+
+      <div class="status">
+
+        ${project.status}
+
+      </div>
 
       <h3>
         ${project.name}
@@ -633,14 +598,27 @@ function renderProjects(
         ${project.niche}
       </p>
 
-    </div>
+      <p>
+        Theme:
+        ${project.theme}
+      </p>
 
+      <p>
+        Privacy:
+        ${project.privacy}
+      </p>
+
+      <p>
+        ${project.topics?.join(', ')}
+      </p>
+
+    </div>
     `
   })
 }
 
 // =========================================
-// MODAL
+// OPEN MODAL
 // =========================================
 
 function openModal(){
@@ -654,6 +632,10 @@ function openModal(){
   )
 }
 
+// =========================================
+// CLOSE MODAL
+// =========================================
+
 function closeModal(){
 
   document
@@ -666,7 +648,7 @@ function closeModal(){
 }
 
 // =========================================
-// CHANNEL SELECT
+// FILL CHANNEL SELECT
 // =========================================
 
 function fillChannelSelect(
@@ -684,14 +666,14 @@ function fillChannelSelect(
 
   channels.forEach(channel=>{
 
-    select.innerHTML += `
+    select.innerHTML +=
 
+    `
     <option value="${channel._id}">
 
       ${channel.channelTitle}
 
     </option>
-
     `
   })
 }
@@ -748,6 +730,16 @@ async function createProject(){
   .map(v=>v.trim())
   .filter(Boolean)
 
+  if(
+    !name ||
+    !channelId
+  ){
+
+    return toast(
+      'Fill required fields'
+    )
+  }
+
   const data =
   await api(
 
@@ -771,14 +763,13 @@ async function createProject(){
     }
   )
 
-  if(data){
+  if(!data) return
 
-    toast(
-      'Project Created'
-    )
+  toast(
+    'Project Created'
+  )
 
-    closeModal()
+  closeModal()
 
-    await loadDashboard()
-  }
+  await loadDashboard()
 }
