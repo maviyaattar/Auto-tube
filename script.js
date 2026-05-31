@@ -1,5 +1,5 @@
 // =========================================
-// FULL UPDATED script.js
+// FULL script.js WITH PAGE DEBUG
 // =========================================
 
 const API =
@@ -20,15 +20,7 @@ window.addEventListener(
 
     try{
 
-      // =========================
-      // HANDLE GOOGLE CALLBACK
-      // =========================
-
       await handleOAuth()
-
-      // =========================
-      // LOAD DASHBOARD
-      // =========================
 
       if(token){
 
@@ -39,10 +31,66 @@ window.addEventListener(
 
     }catch(err){
 
-      console.log(err)
+      showDebug(
+        err.message,
+        true
+      )
     }
   }
 )
+
+// =========================================
+// DEBUG BOX
+// =========================================
+
+function showDebug(
+  text,
+  isError=false
+){
+
+  let debug =
+  document.getElementById(
+    'debugBox'
+  )
+
+  if(!debug){
+
+    debug =
+    document.createElement('div')
+
+    debug.id = 'debugBox'
+
+    debug.style.position = 'fixed'
+    debug.style.top = '0'
+    debug.style.left = '0'
+    debug.style.width = '100%'
+    debug.style.height = '100%'
+    debug.style.background = '#000'
+    debug.style.color =
+    isError ? 'red' : '#00ff88'
+
+    debug.style.zIndex = '999999'
+    debug.style.padding = '20px'
+    debug.style.overflow = 'auto'
+    debug.style.whiteSpace = 'pre-wrap'
+    debug.style.wordBreak = 'break-word'
+    debug.style.fontSize = '14px'
+
+    document.body.appendChild(
+      debug
+    )
+  }
+
+  debug.innerHTML += `
+
+====================================
+
+${text}
+
+====================================
+
+`
+}
 
 // =========================================
 // HELPERS
@@ -51,15 +99,23 @@ window.addEventListener(
 function showLoader(){
 
   document
-  .getElementById('loader')
-  ?.classList.remove('hidden')
+  .getElementById(
+    'loader'
+  )
+  ?.classList.remove(
+    'hidden'
+  )
 }
 
 function hideLoader(){
 
   document
-  .getElementById('loader')
-  ?.classList.add('hidden')
+  .getElementById(
+    'loader'
+  )
+  ?.classList.add(
+    'hidden'
+  )
 }
 
 function toast(msg){
@@ -70,12 +126,20 @@ function toast(msg){
 function showApp(){
 
   document
-  .getElementById('authScreen')
-  ?.classList.add('hidden')
+  .getElementById(
+    'authScreen'
+  )
+  ?.classList.add(
+    'hidden'
+  )
 
   document
-  .getElementById('app')
-  ?.classList.remove('hidden')
+  .getElementById(
+    'app'
+  )
+  ?.classList.remove(
+    'hidden'
+  )
 }
 
 function headers(){
@@ -111,46 +175,45 @@ async function api(
       options
     )
 
-    const contentType =
-    response.headers.get(
-      'content-type'
-    ) || ''
-
-    let data
-
-    // =====================================
-    // JSON
-    // =====================================
-
-    if(
-      contentType.includes(
-        'application/json'
-      )
-    ){
-
-      data =
-      await response.json()
-
-    }else{
-
-      const text =
-      await response.text()
-
-      console.log(
-        'RAW RESPONSE:',
-        text
-      )
-
-      throw new Error(
-
-        'Server returned non JSON response'
-      )
-    }
+    const raw =
+    await response.text()
 
     hideLoader()
 
+    showDebug(
+
+`URL:
+${API + url}
+
+STATUS:
+${response.status}
+
+RESPONSE:
+
+${raw}
+
+`
+    )
+
     // =====================================
-    // ERROR STATUS
+    // TRY JSON
+    // =====================================
+
+    let data
+
+    try{
+
+      data = JSON.parse(raw)
+
+    }catch{
+
+      throw new Error(
+        'Response is not JSON'
+      )
+    }
+
+    // =====================================
+    // STATUS ERROR
     // =====================================
 
     if(!response.ok){
@@ -168,12 +231,11 @@ async function api(
 
     hideLoader()
 
-    console.log(err)
+    showDebug(
 
-    toast(
+      err.message,
 
-      err.message ||
-      'Something went wrong'
+      true
     )
 
     return null
@@ -186,81 +248,74 @@ async function api(
 
 async function signup(){
 
-  try{
+  const name =
+  document
+  .getElementById('name')
+  .value
+  .trim()
 
-    const name =
-    document
-    .getElementById('name')
-    .value
-    .trim()
+  const email =
+  document
+  .getElementById('email')
+  .value
+  .trim()
 
-    const email =
-    document
-    .getElementById('email')
-    .value
-    .trim()
+  const password =
+  document
+  .getElementById('password')
+  .value
+  .trim()
 
-    const password =
-    document
-    .getElementById('password')
-    .value
-    .trim()
+  if(
+    !name ||
+    !email ||
+    !password
+  ){
 
-    if(
-      !name ||
-      !email ||
-      !password
-    ){
-
-      return toast(
-        'Fill all fields'
-      )
-    }
-
-    const data =
-    await api(
-
-      '/signup',
-
-      {
-
-        method:'POST',
-
-        headers:{
-          'Content-Type':
-          'application/json'
-        },
-
-        body:JSON.stringify({
-
-          name,
-          email,
-          password
-        })
-      }
+    return toast(
+      'Fill all fields'
     )
-
-    if(!data) return
-
-    token = data.token
-
-    localStorage.setItem(
-      'token',
-      token
-    )
-
-    toast(
-      'Signup Success'
-    )
-
-    showApp()
-
-    await loadDashboard()
-
-  }catch(err){
-
-    console.log(err)
   }
+
+  const data =
+  await api(
+
+    '/signup',
+
+    {
+
+      method:'POST',
+
+      headers:{
+        'Content-Type':
+        'application/json'
+      },
+
+      body:JSON.stringify({
+
+        name,
+        email,
+        password
+      })
+    }
+  )
+
+  if(!data) return
+
+  token = data.token
+
+  localStorage.setItem(
+    'token',
+    token
+  )
+
+  toast(
+    'Signup Success'
+  )
+
+  showApp()
+
+  await loadDashboard()
 }
 
 // =========================================
@@ -269,73 +324,66 @@ async function signup(){
 
 async function login(){
 
-  try{
+  const email =
+  document
+  .getElementById('email')
+  .value
+  .trim()
 
-    const email =
-    document
-    .getElementById('email')
-    .value
-    .trim()
+  const password =
+  document
+  .getElementById('password')
+  .value
+  .trim()
 
-    const password =
-    document
-    .getElementById('password')
-    .value
-    .trim()
+  if(
+    !email ||
+    !password
+  ){
 
-    if(
-      !email ||
-      !password
-    ){
-
-      return toast(
-        'Fill all fields'
-      )
-    }
-
-    const data =
-    await api(
-
-      '/login',
-
-      {
-
-        method:'POST',
-
-        headers:{
-          'Content-Type':
-          'application/json'
-        },
-
-        body:JSON.stringify({
-
-          email,
-          password
-        })
-      }
+    return toast(
+      'Fill all fields'
     )
-
-    if(!data) return
-
-    token = data.token
-
-    localStorage.setItem(
-      'token',
-      token
-    )
-
-    toast(
-      'Login Success'
-    )
-
-    showApp()
-
-    await loadDashboard()
-
-  }catch(err){
-
-    console.log(err)
   }
+
+  const data =
+  await api(
+
+    '/login',
+
+    {
+
+      method:'POST',
+
+      headers:{
+        'Content-Type':
+        'application/json'
+      },
+
+      body:JSON.stringify({
+
+        email,
+        password
+      })
+    }
+  )
+
+  if(!data) return
+
+  token = data.token
+
+  localStorage.setItem(
+    'token',
+    token
+  )
+
+  toast(
+    'Login Success'
+  )
+
+  showApp()
+
+  await loadDashboard()
 }
 
 // =========================================
@@ -359,200 +407,161 @@ function logout(){
 
 async function connectYouTube(){
 
-  try{
+  if(!token){
 
-    if(!token){
-
-      return toast(
-        'Login first'
-      )
-    }
-
-    const data =
-    await api(
-
-      '/youtube/connect',
-
-      {
-
-        method:'GET',
-
-        headers:headers()
-      }
+    return toast(
+      'Login first'
     )
+  }
 
-    if(
-      data &&
-      data.url
-    ){
+  const data =
+  await api(
 
-      window.location.href =
-      data.url
+    '/youtube/connect',
+
+    {
+
+      method:'GET',
+
+      headers:headers()
     }
+  )
 
-  }catch(err){
+  if(
+    data &&
+    data.url
+  ){
 
-    console.log(err)
+    window.location.href =
+    data.url
   }
 }
 
 // =========================================
-// HANDLE GOOGLE CALLBACK
+// HANDLE OAUTH
 // =========================================
 
 async function handleOAuth(){
 
-  try{
+  const params =
+  new URLSearchParams(
+    location.search
+  )
 
-    const params =
-    new URLSearchParams(
-      window.location.search
+  const code =
+  params.get('code')
+
+  if(!code){
+
+    showDebug(
+      'No OAuth code found'
     )
 
-    const code =
-    params.get('code')
+    return
+  }
 
-    // =============================
-    // NO CODE
-    // =============================
+  if(!token){
 
-    if(!code){
-
-      console.log(
-        'No OAuth code'
-      )
-
-      return
-    }
-
-    // =============================
-    // NOT LOGGED IN
-    // =============================
-
-    if(!token){
-
-      toast(
-        'Please login first'
-      )
-
-      return
-    }
-
-    console.log(
-      'OAuth Code:',
-      code
+    showDebug(
+      'No token found'
     )
 
-    const data =
-    await api(
+    return
+  }
 
-      '/youtube/callback',
+  showDebug(
+    'OAuth code found'
+  )
 
-      {
+  const data =
+  await api(
 
-        method:'POST',
+    '/youtube/callback',
 
-        headers:headers(),
+    {
 
-        body:JSON.stringify({
+      method:'POST',
 
-          code
-        })
-      }
+      headers:headers(),
+
+      body:JSON.stringify({
+
+        code
+      })
+    }
+  )
+
+  if(data){
+
+    toast(
+      'YouTube Connected'
     )
 
-    console.log(data)
+    history.replaceState(
 
-    if(data){
+      {},
 
-      toast(
-        'YouTube Connected Successfully'
-      )
+      document.title,
 
-      // ===========================
-      // REMOVE QUERY PARAMS
-      // ===========================
-
-      window.history.replaceState(
-
-        {},
-
-        document.title,
-
-        '/'
-      )
-    }
-
-  }catch(err){
-
-    console.log(err)
+      '/'
+    )
   }
 }
 
 // =========================================
-// LOAD DASHBOARD
+// DASHBOARD
 // =========================================
 
 async function loadDashboard(){
 
-  try{
+  const channelsRes =
+  await api(
 
-    const channelsRes =
-    await api(
+    '/channels',
 
-      '/channels',
+    {
 
-      {
+      method:'GET',
 
-        method:'GET',
-
-        headers:headers()
-      }
-    )
-
-    const projectsRes =
-    await api(
-
-      '/projects',
-
-      {
-
-        method:'GET',
-
-        headers:headers()
-      }
-    )
-
-    if(
-      !channelsRes ||
-      !projectsRes
-    ){
-      return
+      headers:headers()
     }
+  )
 
-    renderChannels(
+  const projectsRes =
+  await api(
 
-      channelsRes.channels || []
-    )
+    '/projects',
 
-    renderProjects(
+    {
 
-      projectsRes.projects || []
-    )
+      method:'GET',
 
-    fillChannelSelect(
+      headers:headers()
+    }
+  )
 
-      channelsRes.channels || []
-    )
-
-  }catch(err){
-
-    console.log(err)
+  if(
+    !channelsRes ||
+    !projectsRes
+  ){
+    return
   }
+
+  renderChannels(
+    channelsRes.channels || []
+  )
+
+  renderProjects(
+    projectsRes.projects || []
+  )
+
+  fillChannelSelect(
+    channelsRes.channels || []
+  )
 }
 
 // =========================================
-// RENDER CHANNELS
+// CHANNELS
 // =========================================
 
 function renderChannels(
@@ -567,21 +576,6 @@ function renderChannels(
   if(!grid) return
 
   grid.innerHTML = ''
-
-  if(!channels.length){
-
-    grid.innerHTML = `
-
-    <div class="empty">
-
-      No channels connected
-
-    </div>
-
-    `
-
-    return
-  }
 
   channels.forEach(channel=>{
 
@@ -609,7 +603,7 @@ function renderChannels(
 }
 
 // =========================================
-// RENDER PROJECTS
+// PROJECTS
 // =========================================
 
 function renderProjects(
@@ -625,31 +619,11 @@ function renderProjects(
 
   grid.innerHTML = ''
 
-  if(!projects.length){
-
-    grid.innerHTML = `
-
-    <div class="empty">
-
-      No projects created
-
-    </div>
-
-    `
-
-    return
-  }
-
   projects.forEach(project=>{
 
     grid.innerHTML += `
 
     <div class="card">
-
-      <div class="badge ${project.status}">
-
-        ${project.status}
-      </div>
 
       <h3>
         ${project.name}
@@ -659,21 +633,6 @@ function renderProjects(
         ${project.niche}
       </p>
 
-      <p>
-        Theme:
-        ${project.theme}
-      </p>
-
-      <p>
-        Privacy:
-        ${project.privacy}
-      </p>
-
-      <p>
-        Topics:
-        ${project.topics?.join(', ')}
-      </p>
-
     </div>
 
     `
@@ -681,7 +640,7 @@ function renderProjects(
 }
 
 // =========================================
-// OPEN MODAL
+// MODAL
 // =========================================
 
 function openModal(){
@@ -695,10 +654,6 @@ function openModal(){
   )
 }
 
-// =========================================
-// CLOSE MODAL
-// =========================================
-
 function closeModal(){
 
   document
@@ -711,7 +666,7 @@ function closeModal(){
 }
 
 // =========================================
-// FILL CHANNEL SELECT
+// CHANNEL SELECT
 // =========================================
 
 function fillChannelSelect(
@@ -747,99 +702,83 @@ function fillChannelSelect(
 
 async function createProject(){
 
-  try{
+  const name =
+  document
+  .getElementById(
+    'projectName'
+  )
+  .value
+  .trim()
 
-    const name =
-    document
-    .getElementById(
-      'projectName'
-    )
-    .value
-    .trim()
+  const niche =
+  document
+  .getElementById(
+    'projectNiche'
+  )
+  .value
 
-    const niche =
-    document
-    .getElementById(
-      'projectNiche'
-    )
-    .value
+  const theme =
+  document
+  .getElementById(
+    'projectTheme'
+  )
+  .value
 
-    const theme =
-    document
-    .getElementById(
-      'projectTheme'
-    )
-    .value
+  const privacy =
+  document
+  .getElementById(
+    'projectPrivacy'
+  )
+  .value
 
-    const privacy =
-    document
-    .getElementById(
-      'projectPrivacy'
-    )
-    .value
+  const channelId =
+  document
+  .getElementById(
+    'projectChannel'
+  )
+  .value
 
-    const channelId =
-    document
-    .getElementById(
-      'projectChannel'
-    )
-    .value
+  const topics =
+  document
+  .getElementById(
+    'projectTopics'
+  )
+  .value
+  .split(',')
+  .map(v=>v.trim())
+  .filter(Boolean)
 
-    const topics =
-    document
-    .getElementById(
-      'projectTopics'
-    )
-    .value
-    .split(',')
-    .map(v=>v.trim())
-    .filter(Boolean)
+  const data =
+  await api(
 
-    if(
-      !name ||
-      !channelId
-    ){
+    '/projects',
 
-      return toast(
-        'Fill all required fields'
-      )
+    {
+
+      method:'POST',
+
+      headers:headers(),
+
+      body:JSON.stringify({
+
+        name,
+        niche,
+        theme,
+        privacy,
+        topics,
+        channelId
+      })
     }
+  )
 
-    const data =
-    await api(
-
-      '/projects',
-
-      {
-
-        method:'POST',
-
-        headers:headers(),
-
-        body:JSON.stringify({
-
-          name,
-          niche,
-          theme,
-          privacy,
-          topics,
-          channelId
-        })
-      }
-    )
-
-    if(!data) return
+  if(data){
 
     toast(
-      'Project Created Successfully'
+      'Project Created'
     )
 
     closeModal()
 
     await loadDashboard()
-
-  }catch(err){
-
-    console.log(err)
   }
 }
