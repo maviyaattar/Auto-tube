@@ -1,36 +1,291 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AutoTube - Login</title>
-  <link rel="stylesheet" href="/css/style.css" />
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>AutoTube AI</title>
+
+<link rel="stylesheet" href="style.css">
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
 </head>
+
 <body>
-  <div class="container grid grid-2">
-    <div class="card">
-      <h2>Login</h2>
-      <form id="loginForm">
-        <label>Email<input class="input" name="email" type="email" required /></label>
-        <label>Password<input class="input" name="password" type="password" required /></label>
-        <button class="btn btn-primary" type="submit">Login</button>
-      </form>
-    </div>
-    <div class="card">
-      <h2>Signup</h2>
-      <form id="signupForm">
-        <label>Name<input class="input" name="name" required /></label>
-        <label>Email<input class="input" name="email" type="email" required /></label>
-        <label>Password<input class="input" name="password" type="password" required /></label>
-        <button class="btn btn-primary" type="submit">Signup</button>
-      </form>
-      <hr />
-      <button id="ytConnectBtn" class="btn btn-secondary" type="button">Connect YouTube OAuth2</button>
-      <div id="authMsg"></div>
-    </div>
-  </div>
-  <script src="/js/api.js"></script>
-  <script src="/js/utils.js"></script>
-  <script src="/js/auth.js"></script>
+
+<div class="app">
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+
+            <div class="logo-circle"></div>
+
+            <h2>AutoTube AI</h2>
+
+        </div>
+
+        <nav>
+
+            <button class="nav-btn active" data-page="dashboard">
+                Dashboard
+            </button>
+
+            <button class="nav-btn" data-page="projects">
+                Projects
+            </button>
+
+            <button class="nav-btn" data-page="history">
+                Upload History
+            </button>
+
+            <button class="nav-btn" data-page="settings">
+                Settings
+            </button>
+
+        </nav>
+
+        <div class="sidebar-footer">
+
+            <button id="logoutBtn">
+                Logout
+            </button>
+
+        </div>
+
+    </aside>
+
+    <!-- MAIN -->
+
+    <main class="main">
+
+        <!-- LOGIN -->
+
+        <section id="loginPage" class="page">
+
+            <div class="auth-box">
+
+                <h1>AutoTube AI</h1>
+
+                <p>
+                    Create AI Shorts. Upload Automatically.
+                </p>
+
+                <input
+                    type="email"
+                    id="email"
+                    placeholder="Email Address"
+                >
+
+                <input
+                    type="password"
+                    id="password"
+                    placeholder="Password"
+                >
+
+                <button id="loginBtn">
+                    Login
+                </button>
+
+                <button id="signupBtn" class="secondary">
+                    Create Account
+                </button>
+
+                <button id="youtubeConnectBtn">
+                    Connect YouTube
+                </button>
+
+            </div>
+
+        </section>
+
+        <!-- DASHBOARD -->
+
+        <section id="dashboardPage" class="page hidden">
+
+            <div class="page-header">
+
+                <div>
+
+                    <h1>Dashboard</h1>
+
+                    <p>
+                        Overview of your automation
+                    </p>
+
+                </div>
+
+                <button id="newProjectBtn">
+
+                    + New Project
+
+                </button>
+
+            </div>
+
+            <div class="stats-grid">
+
+                <div class="stat-card">
+
+                    <h3>Total Uploads</h3>
+
+                    <span id="totalUploads">
+                        0
+                    </span>
+
+                </div>
+
+                <div class="stat-card">
+
+                    <h3>Projects</h3>
+
+                    <span id="totalProjects">
+                        0
+                    </span>
+
+                </div>
+
+                <div class="stat-card">
+
+                    <h3>Channels</h3>
+
+                    <span id="totalChannels">
+                        0
+                    </span>
+
+                </div>
+
+                <div class="stat-card">
+
+                    <h3>Active</h3>
+
+                    <span id="activeProjects">
+                        0
+                    </span>
+
+                </div>
+
+            </div>
+
+            <div class="dashboard-section">
+
+                <div class="section-title">
+
+                    Recent Projects
+
+                </div>
+
+                <div id="dashboardProjects">
+
+                </div>
+
+            </div>
+
+        </section>
+        <!-- PROJECTS -->
+
+        <section id="projectsPage" class="page hidden">
+
+            <div class="page-header">
+
+                <h1>Projects</h1>
+
+                <button id="createProjectButton">
+
+                    Create Project
+
+                </button>
+
+            </div>
+
+            <div id="projectContainer">
+
+            </div>
+
+        </section>
+
+        <!-- HISTORY -->
+
+        <section id="historyPage" class="page hidden">
+
+            <h1>Upload History</h1>
+
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+
+                    <tr>
+
+                        <th>Title</th>
+
+                        <th>Date</th>
+
+                        <th>Video</th>
+
+                    </tr>
+
+                    </thead>
+
+                    <tbody id="historyTable">
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+        <!-- SETTINGS -->
+
+        <section id="settingsPage" class="page hidden">
+
+            <h1>Settings</h1>
+
+            <div class="settings-grid">
+
+                <input
+                    id="brandName"
+                    placeholder="Brand Name"
+                >
+
+                <input
+                    id="seriesName"
+                    placeholder="Series Name"
+                >
+
+                <input
+                    id="channelHandle"
+                    placeholder="@channel"
+                >
+
+                <textarea
+                    id="descriptionTemplate"
+                    placeholder="Description Template"
+                ></textarea>
+
+                <button id="saveSettingsBtn">
+
+                    Save Settings
+
+                </button>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+<script src="script.js"></script>
+
 </body>
 </html>
