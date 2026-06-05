@@ -1,284 +1,36 @@
-<!-- index.html -->
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  />
-
-  <title>AutoTube AI</title>
-
-  <link
-    rel="stylesheet"
-    href="./style.css"
-  />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AutoTube - Login</title>
+  <link rel="stylesheet" href="/css/style.css" />
 </head>
 <body>
-
-  <!-- ========================= -->
-  <!-- LOADER -->
-  <!-- ========================= -->
-
-  <div id="loader" class="loader">
-    <div class="spinner"></div>
-  </div>
-
-  <!-- ========================= -->
-  <!-- AUTH -->
-  <!-- ========================= -->
-
-  <section id="authSection" class="auth-section">
-
-    <div class="auth-card">
-
-      <h1>AutoTube AI 🚀</h1>
-
-      <p>
-        AI Shorts Automation SaaS
-      </p>
-
-      <div class="tabs">
-
-        <button
-          id="loginTab"
-          class="active"
-        >
-          Login
-        </button>
-
-        <button
-          id="signupTab"
-        >
-          Signup
-        </button>
-
-      </div>
-
-      <!-- LOGIN -->
-
+  <div class="container grid grid-2">
+    <div class="card">
+      <h2>Login</h2>
       <form id="loginForm">
-
-        <input
-          type="email"
-          id="loginEmail"
-          placeholder="Email"
-          required
-        />
-
-        <input
-          type="password"
-          id="loginPassword"
-          placeholder="Password"
-          required
-        />
-
-        <button type="submit">
-          Login
-        </button>
-
+        <label>Email<input class="input" name="email" type="email" required /></label>
+        <label>Password<input class="input" name="password" type="password" required /></label>
+        <button class="btn btn-primary" type="submit">Login</button>
       </form>
-
-      <!-- SIGNUP -->
-
-      <form
-        id="signupForm"
-        class="hidden"
-      >
-
-        <input
-          type="text"
-          id="signupName"
-          placeholder="Name"
-          required
-        />
-
-        <input
-          type="email"
-          id="signupEmail"
-          placeholder="Email"
-          required
-        />
-
-        <input
-          type="password"
-          id="signupPassword"
-          placeholder="Password"
-          required
-        />
-
-        <button type="submit">
-          Signup
-        </button>
-
+    </div>
+    <div class="card">
+      <h2>Signup</h2>
+      <form id="signupForm">
+        <label>Name<input class="input" name="name" required /></label>
+        <label>Email<input class="input" name="email" type="email" required /></label>
+        <label>Password<input class="input" name="password" type="password" required /></label>
+        <button class="btn btn-primary" type="submit">Signup</button>
       </form>
-
+      <hr />
+      <button id="ytConnectBtn" class="btn btn-secondary" type="button">Connect YouTube OAuth2</button>
+      <div id="authMsg"></div>
     </div>
-
-  </section>
-
-  <!-- ========================= -->
-  <!-- DASHBOARD -->
-  <!-- ========================= -->
-
-  <section
-    id="dashboardSection"
-    class="hidden"
-  >
-
-    <!-- NAVBAR -->
-
-    <nav class="navbar">
-
-      <h2>AutoTube</h2>
-
-      <div class="nav-buttons">
-
-        <button
-          id="connectBtn"
-        >
-          Connect Channel
-        </button>
-
-        <button
-          id="logoutBtn"
-          class="danger"
-        >
-          Logout
-        </button>
-
-      </div>
-
-    </nav>
-
-    <!-- CONTENT -->
-
-    <div class="dashboard">
-
-      <!-- CHANNELS -->
-
-      <div class="card">
-
-        <h3>Channels</h3>
-
-        <div id="channels">
-          No Channels
-        </div>
-
-      </div>
-
-      <!-- CREATE PROJECT -->
-
-      <div class="card">
-
-        <h3>Create Project</h3>
-
-        <form id="projectForm">
-
-          <input
-            type="text"
-            id="projectName"
-            placeholder="Project Name"
-            required
-          />
-
-          <select id="niche">
-
-            <option value="islamic">
-              Islamic
-            </option>
-
-            <option value="motivation">
-              Motivation
-            </option>
-
-            <option value="quiz">
-              Quiz
-            </option>
-
-            <option value="facts">
-              Facts
-            </option>
-
-          </select>
-
-          <input
-            type="text"
-            id="topics"
-            placeholder="Topics (comma separated)"
-          />
-
-          <select id="theme">
-
-            <option value="golden">
-              Golden
-            </option>
-
-            <option value="dark">
-              Dark
-            </option>
-
-            <option value="neon">
-              Neon
-            </option>
-
-            <option value="premium">
-              Premium
-            </option>
-
-          </select>
-
-          <select id="privacy">
-
-            <option value="public">
-              Public
-            </option>
-
-            <option value="private">
-              Private
-            </option>
-
-            <option value="unlisted">
-              Unlisted
-            </option>
-
-          </select>
-
-          <input
-            type="time"
-            id="uploadTime"
-            required
-          />
-
-          <select id="channelSelect">
-          </select>
-
-          <button type="submit">
-            Create Project
-          </button>
-
-        </form>
-
-      </div>
-
-      <!-- PROJECTS -->
-
-      <div class="card">
-
-        <h3>Projects</h3>
-
-        <div id="projects">
-          No Projects
-        </div>
-
-      </div>
-
-    </div>
-
-  </section>
-
-  <script src="./script.js"></script>
-
+  </div>
+  <script src="/js/api.js"></script>
+  <script src="/js/utils.js"></script>
+  <script src="/js/auth.js"></script>
 </body>
 </html>
