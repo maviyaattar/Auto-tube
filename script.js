@@ -1,772 +1,1630 @@
-// script.js
+/* ======================================
+   AUTOTUBE AI
+   PRODUCTION SCRIPT
+====================================== */
 
 const API =
-'https://autotube-kajc.onrender.com'
+"https://autotube-kajc.onrender.com";
 
-// =========================
-// ELEMENTS
-// =========================
+const App = {
 
-const authSection =
-document.getElementById(
-  'authSection'
-)
+    token:
+    localStorage.getItem("token") || "",
 
-const dashboardSection =
-document.getElementById(
-  'dashboardSection'
-)
+    user: null,
 
-const loader =
-document.getElementById(
-  'loader'
-)
+    projects: [],
 
-const loginForm =
-document.getElementById(
-  'loginForm'
-)
+    channels: [],
 
-const signupForm =
-document.getElementById(
-  'signupForm'
-)
+    settings: null
+};
 
-const loginTab =
-document.getElementById(
-  'loginTab'
-)
+/* ======================================
+   DOM HELPERS
+====================================== */
 
-const signupTab =
-document.getElementById(
-  'signupTab'
-)
+const $ = selector =>
+document.querySelector(selector);
 
-const channelsDiv =
-document.getElementById(
-  'channels'
-)
+const $$ = selector =>
+document.querySelectorAll(selector);
 
-const projectsDiv =
-document.getElementById(
-  'projects'
-)
+/* ======================================
+   TOAST
+====================================== */
 
-const channelSelect =
-document.getElementById(
-  'channelSelect'
-)
+function toast(message,type="success"){
 
-// =========================
-// HELPERS
-// =========================
+    const toast =
+    document.createElement("div");
+
+    toast.className =
+    `toast ${type}`;
+
+    toast.innerText =
+    message;
+
+    document.body.appendChild(toast);
+
+    setTimeout(()=>{
+
+        toast.classList.add("show");
+
+    },100);
+
+    setTimeout(()=>{
+
+        toast.remove();
+
+    },3500);
+}
+
+/* ======================================
+   LOADER
+====================================== */
 
 function showLoader(){
 
-  loader.style.display='flex'
+    let loader =
+    document.getElementById("globalLoader");
+
+    if(loader) return;
+
+    loader =
+    document.createElement("div");
+
+    loader.id =
+    "globalLoader";
+
+    loader.innerHTML =
+    `
+    <div class="loader"></div>
+    `;
+
+    document.body.appendChild(loader);
 }
 
 function hideLoader(){
 
-  loader.style.display='none'
+    const loader =
+    document.getElementById("globalLoader");
+
+    if(loader)
+    loader.remove();
 }
 
-function token(){
+/* ======================================
+   API CLIENT
+====================================== */
 
-  return localStorage.getItem(
-    'token'
-  )
-}
+async function api(
+endpoint,
+method="GET",
+body=null
+){
 
-function authHeaders(){
+    const options = {
 
-  return {
-
-    'Content-Type':
-    'application/json',
-
-    Authorization:
-    `Bearer ${token()}`
-  }
-}
-
-function showDashboard(){
-
-  authSection.classList.add(
-    'hidden'
-  )
-
-  dashboardSection.classList.remove(
-    'hidden'
-  )
-}
-
-function showAuth(){
-
-  authSection.classList.remove(
-    'hidden'
-  )
-
-  dashboardSection.classList.add(
-    'hidden'
-  )
-}
-
-// =========================
-// TABS
-// =========================
-
-loginTab.onclick=()=>{
-
-  loginTab.classList.add('active')
-
-  signupTab.classList.remove('active')
-
-  loginForm.classList.remove('hidden')
-
-  signupForm.classList.add('hidden')
-}
-
-signupTab.onclick=()=>{
-
-  signupTab.classList.add('active')
-
-  loginTab.classList.remove('active')
-
-  signupForm.classList.remove('hidden')
-
-  loginForm.classList.add('hidden')
-}
-
-// =========================
-// SIGNUP
-// =========================
-
-signupForm.onsubmit =
-async(e)=>{
-
-  e.preventDefault()
-
-  try{
-
-    showLoader()
-
-    const res =
-    await fetch(
-
-      `${API}/api/signup`,
-
-      {
-
-        method:'POST',
+        method,
 
         headers:{
-          'Content-Type':
-          'application/json'
-        },
+            "Content-Type":
+            "application/json"
+        }
+    };
 
-        body:JSON.stringify({
+    if(App.token){
 
-          name:
-          document.getElementById(
-            'signupName'
-          ).value,
-
-          email:
-          document.getElementById(
-            'signupEmail'
-          ).value,
-
-          password:
-          document.getElementById(
-            'signupPassword'
-          ).value
-
-        })
-      }
-    )
-
-    const data =
-    await res.json()
-
-    if(!res.ok){
-
-      throw new Error(
-        data.msg
-      )
+        options.headers.Authorization =
+        `Bearer ${App.token}`;
     }
+
+    if(body){
+
+        options.body =
+        JSON.stringify(body);
+    }
+
+    try{
+
+        showLoader();
+
+        const response =
+        await fetch(
+            API + endpoint,
+            options
+        );
+
+        const data =
+        await response.json();
+
+        hideLoader();
+
+        if(!response.ok){
+
+            throw new Error(
+                data.msg ||
+                "Request Failed"
+            );
+        }
+
+        return data;
+
+    }catch(error){
+
+        hideLoader();
+
+        toast(
+            error.message,
+            "error"
+        );
+
+        throw error;
+    }
+}
+
+/* ======================================
+   TOKEN
+====================================== */
+
+function saveToken(token){
+
+    App.token = token;
 
     localStorage.setItem(
-      'token',
-      data.token
-    )
-
-    await initDashboard()
-
-  }catch(err){
-
-    alert(err.message)
-
-  }finally{
-
-    hideLoader()
-  }
+        "token",
+        token
+    );
 }
 
-// =========================
-// LOGIN
-// =========================
+function clearToken(){
 
-loginForm.onsubmit =
-async(e)=>{
+    App.token = "";
 
-  e.preventDefault()
+    localStorage.removeItem(
+        "token"
+    );
+}
 
-  try{
+/* ======================================
+   LOGIN
+====================================== */
 
-    showLoader()
+async function login(){
 
-    const res =
-    await fetch(
+    const email =
+    $("#email").value.trim();
 
-      `${API}/api/login`,
+    const password =
+    $("#password").value.trim();
 
-      {
+    if(!email || !password){
 
-        method:'POST',
-
-        headers:{
-          'Content-Type':
-          'application/json'
-        },
-
-        body:JSON.stringify({
-
-          email:
-          document.getElementById(
-            'loginEmail'
-          ).value,
-
-          password:
-          document.getElementById(
-            'loginPassword'
-          ).value
-
-        })
-      }
-    )
-
-    const data =
-    await res.json()
-
-    if(!res.ok){
-
-      throw new Error(
-        data.msg
-      )
+        return toast(
+            "Enter email and password",
+            "error"
+        );
     }
 
-    localStorage.setItem(
-      'token',
-      data.token
-    )
+    try{
 
-    await initDashboard()
+        const data =
+        await api(
+            "/api/login",
+            "POST",
+            {
+                email,
+                password
+            }
+        );
 
-  }catch(err){
+        saveToken(
+            data.token
+        );
 
-    alert(err.message)
+        toast(
+            "Login Success"
+        );
 
-  }finally{
+        await bootstrap();
 
-    hideLoader()
-  }
+    }catch(err){
+
+        console.error(err);
+    }
 }
 
-// =========================
-// CONNECT CHANNEL
-// =========================
+/* ======================================
+   SIGNUP
+====================================== */
 
-document.getElementById(
-  'connectBtn'
-).onclick =
-async()=>{
+async function signup(){
 
-  try{
+    const email =
+    $("#email").value.trim();
 
-    showLoader()
+    const password =
+    $("#password").value.trim();
 
-    const res =
-    await fetch(
+    const name =
+    email.split("@")[0];
 
-      `${API}/api/youtube/connect`,
+    if(!email || !password){
 
-      {
-
-        headers:authHeaders()
-      }
-    )
-
-    const data =
-    await res.json()
-
-    window.location.href =
-    data.url
-
-  }catch(err){
-
-    alert(err.message)
-
-  }finally{
-
-    hideLoader()
-  }
-}
-
-// =========================
-// OAUTH CALLBACK
-// =========================
-
-async function handleOAuth(){
-
-  const code =
-  new URLSearchParams(
-    window.location.search
-  ).get('code')
-
-  if(!code) return
-
-  try{
-
-    showLoader()
-
-    const res =
-    await fetch(
-
-      `${API}/api/youtube/callback`,
-
-      {
-
-        method:'POST',
-
-        headers:authHeaders(),
-
-        body:JSON.stringify({
-          code
-        })
-      }
-    )
-
-    const data =
-    await res.json()
-
-    if(!res.ok){
-
-      throw new Error(
-        data.msg
-      )
+        return toast(
+            "Fill all fields",
+            "error"
+        );
     }
 
-    history.replaceState(
-      {},
-      '',
-      '/'
-    )
+    try{
 
-    await loadChannels()
+        const data =
+        await api(
+            "/api/signup",
+            "POST",
+            {
+                name,
+                email,
+                password
+            }
+        );
 
-    alert(
-      'Channel Connected ✅'
-    )
+        saveToken(
+            data.token
+        );
 
-  }catch(err){
+        toast(
+            "Account Created"
+        );
 
-    alert(err.message)
+        await bootstrap();
 
-  }finally{
+    }catch(err){
 
-    hideLoader()
-  }
+        console.error(err);
+    }
 }
 
-// =========================
-// LOAD CHANNELS
-// =========================
+/* ======================================
+   LOGOUT
+====================================== */
+
+function logout(){
+
+    clearToken();
+
+    showPage(
+        "loginPage"
+    );
+
+    toast(
+        "Logged Out"
+    );
+}
+
+/* ======================================
+   PAGE NAVIGATION
+====================================== */
+
+function showPage(id){
+
+    $$(".page")
+    .forEach(page=>{
+
+        page.classList.add(
+            "hidden"
+        );
+
+    });
+
+    document
+    .getElementById(id)
+    .classList.remove(
+        "hidden"
+    );
+}
+
+function bindNavigation(){
+
+    $$(".nav-btn")
+    .forEach(button=>{
+
+        button.addEventListener(
+            "click",
+            ()=>{
+
+                $$(".nav-btn")
+                .forEach(btn=>{
+
+                    btn.classList.remove(
+                        "active"
+                    );
+
+                });
+
+                button.classList.add(
+                    "active"
+                );
+
+                const page =
+                button.dataset.page;
+
+                showPage(
+                    page + "Page"
+                );
+            }
+        );
+    });
+}
+
+/* ======================================
+   YOUTUBE CONNECT
+====================================== */
+
+async function connectYoutube(){
+
+    try{
+
+        const data =
+        await api(
+            "/api/youtube/connect"
+        );
+
+        window.location.href =
+        data.url;
+
+    }catch(err){
+
+        console.error(err);
+    }
+}
+
+/* ======================================
+   GOOGLE CALLBACK
+====================================== */
+
+async function handleOAuthCallback(){
+
+    const params =
+    new URLSearchParams(
+        window.location.search
+    );
+
+    const code =
+    params.get("code");
+
+    if(!code)
+    return;
+
+    if(!App.token)
+    return;
+
+    try{
+
+        await api(
+            "/api/youtube/callback",
+            "POST",
+            {
+                code
+            }
+        );
+
+        toast(
+            "YouTube Connected"
+        );
+
+        window.history.replaceState(
+            {},
+            document.title,
+            window.location.pathname
+        );
+
+    }catch(err){
+
+        console.error(err);
+    }
+}
+/* ======================================
+   BOOTSTRAP
+====================================== */
+
+async function bootstrap(){
+
+    try{
+
+        showPage(
+            "dashboardPage"
+        );
+
+        await Promise.all([
+
+            loadChannels(),
+
+            loadProjects(),
+
+            loadSettings()
+
+        ]);
+
+        updateDashboard();
+
+    }catch(err){
+
+        console.error(err);
+    }
+}
+
+/* ======================================
+   CHANNELS
+====================================== */
 
 async function loadChannels(){
 
-  const res =
-  await fetch(
+    try{
 
-    `${API}/api/channels`,
+        const data =
+        await api(
+            "/api/channels"
+        );
 
-    {
+        App.channels =
+        data.channels || [];
 
-      headers:authHeaders()
+        document
+        .getElementById(
+            "totalChannels"
+        ).textContent =
+        App.channels.length;
+
+        renderChannels();
+
+    }catch(err){
+
+        console.error(err);
     }
-  )
-
-  const data =
-  await res.json()
-
-  channelsDiv.innerHTML=''
-
-  channelSelect.innerHTML=''
-
-  if(!data.channels.length){
-
-    channelsDiv.innerHTML=
-    'No Channels'
-
-    return
-  }
-
-  data.channels.forEach(ch=>{
-
-    channelsDiv.innerHTML += `
-
-      <div class="channel-item">
-
-        <img src="${ch.profileImg}" />
-
-        <h4>
-          ${ch.channelTitle}
-        </h4>
-
-        <button
-          onclick="deleteChannel('${ch._id}')"
-          class="danger"
-        >
-          Delete
-        </button>
-
-      </div>
-    `
-
-    channelSelect.innerHTML += `
-
-      <option value="${ch._id}">
-        ${ch.channelTitle}
-      </option>
-    `
-  })
 }
 
-// =========================
-// DELETE CHANNEL
-// =========================
+function renderChannels(){
+
+    const container =
+    document.getElementById(
+        "connectedChannels"
+    );
+
+    if(!container)
+    return;
+
+    container.innerHTML = "";
+
+    if(
+        !App.channels.length
+    ){
+
+        container.innerHTML =
+        `
+        <div class="empty-state">
+            No channels connected
+        </div>
+        `;
+
+        return;
+    }
+
+    App.channels.forEach(
+    channel=>{
+
+        container.innerHTML +=
+        `
+        <div class="channel-card">
+
+            <img
+            src="${channel.profileImg}"
+            alt="profile">
+
+            <div>
+
+                <h4>
+                ${channel.channelTitle}
+                </h4>
+
+                <p>
+                ${channel.channelId}
+                </p>
+
+            </div>
+
+            <button
+            onclick="deleteChannel('${channel._id}')">
+
+            Delete
+
+            </button>
+
+        </div>
+        `;
+    });
+}
 
 async function deleteChannel(id){
 
-  if(!confirm(
-    'Delete channel?'
-  )) return
+    if(
+        !confirm(
+        "Delete Channel?"
+        )
+    ) return;
 
-  try{
+    try{
 
-    showLoader()
+        await api(
+            `/api/channels/${id}`,
+            "DELETE"
+        );
 
-    await fetch(
+        toast(
+            "Channel Deleted"
+        );
 
-      `${API}/api/channels/${id}`,
+        loadChannels();
 
-      {
+    }catch(err){
 
-        method:'DELETE',
-
-        headers:authHeaders()
-      }
-    )
-
-    await loadChannels()
-
-  }catch(err){
-
-    alert(err.message)
-
-  }finally{
-
-    hideLoader()
-  }
-}
-
-// =========================
-// CREATE PROJECT
-// =========================
-
-document.getElementById(
-  'projectForm'
-).onsubmit =
-async(e)=>{
-
-  e.preventDefault()
-
-  try{
-
-    showLoader()
-
-    const res =
-    await fetch(
-
-      `${API}/api/projects`,
-
-      {
-
-        method:'POST',
-
-        headers:authHeaders(),
-
-        body:JSON.stringify({
-
-          name:
-          document.getElementById(
-            'projectName'
-          ).value,
-
-          niche:
-          document.getElementById(
-            'niche'
-          ).value,
-
-          topics:
-          document.getElementById(
-            'topics'
-          )
-          .value
-          .split(',')
-          .map(t=>t.trim()),
-
-          theme:
-          document.getElementById(
-            'theme'
-          ).value,
-
-          privacy:
-          document.getElementById(
-            'privacy'
-          ).value,
-
-          uploadTime:
-          document.getElementById(
-            'uploadTime'
-          ).value,
-
-          channelId:
-          channelSelect.value
-        })
-      }
-    )
-
-    const data =
-    await res.json()
-
-    if(!res.ok){
-
-      throw new Error(
-        data.msg
-      )
+        console.error(err);
     }
-
-    alert(
-      'Project Created ✅'
-    )
-
-    await loadProjects()
-
-  }catch(err){
-
-    alert(err.message)
-
-  }finally{
-
-    hideLoader()
-  }
 }
 
-// =========================
-// LOAD PROJECTS
-// =========================
+/* ======================================
+   PROJECTS
+====================================== */
 
 async function loadProjects(){
 
-  const res =
-  await fetch(
+    try{
 
-    `${API}/api/projects`,
+        const data =
+        await api(
+            "/api/projects"
+        );
 
-    {
+        App.projects =
+        data.projects || [];
 
-      headers:authHeaders()
+        renderProjects();
+
+    }catch(err){
+
+        console.error(err);
     }
-  )
+}
 
-  const data =
-  await res.json()
+function renderProjects(){
 
-  projectsDiv.innerHTML=''
+    const container =
+    document.getElementById(
+        "projectContainer"
+    );
 
-  if(!data.projects.length){
+    const dashboard =
+    document.getElementById(
+        "dashboardProjects"
+    );
 
-    projectsDiv.innerHTML=
-    'No Projects'
+    if(container)
+    container.innerHTML = "";
 
-    return
-  }
+    if(dashboard)
+    dashboard.innerHTML = "";
 
-  data.projects.forEach(p=>{
+    App.projects.forEach(
+    project=>{
 
-    projectsDiv.innerHTML += `
+        const card =
+        createProjectCard(
+            project
+        );
 
-      <div class="project-item">
+        if(container)
+        container.innerHTML +=
+        card;
 
-        <h4>${p.name}</h4>
+        if(dashboard)
+        dashboard.innerHTML +=
+        card;
+    });
 
-        <p>
-          ${p.niche}
-        </p>
+    updateDashboard();
+}
 
-        <p>
-          ${p.uploadTime}
-        </p>
+function createProjectCard(
+project
+){
 
-        <p>
-          ${p.status}
-        </p>
+    return `
+    <div class="project-card">
 
-        <div class="project-actions">
+        <div class="project-top">
 
-          <button
-            onclick="editProject('${p._id}')"
-          >
-            Edit
-          </button>
+            <h3>
+            ${project.name}
+            </h3>
 
-          <button
-            onclick="deleteProject('${p._id}')"
-            class="danger"
-          >
-            Delete
-          </button>
+            <span
+            class="status
+            ${project.status}">
+
+            ${project.status}
+
+            </span>
 
         </div>
 
-      </div>
-    `
-  })
+        <p>
+
+        Niche:
+        ${project.niche}
+
+        </p>
+
+        <p>
+
+        Upload:
+        ${project.uploadTime}
+
+        </p>
+
+        <p>
+
+        Reels:
+        ${project.reelsPerDay}
+
+        </p>
+
+        <div
+        class="project-actions">
+
+            <button
+            class="edit-btn"
+            onclick="editProject('${project._id}')">
+
+            Edit
+
+            </button>
+
+            <button
+            class="history-btn"
+            onclick="openHistory('${project._id}')">
+
+            History
+
+            </button>
+
+            <button
+            class="generate-btn"
+            onclick="generateVideo('${project._id}')">
+
+            Generate
+
+            </button>
+
+            <button
+            class="delete-btn"
+            onclick="deleteProject('${project._id}')">
+
+            Delete
+
+            </button>
+
+        </div>
+
+    </div>
+    `;
 }
 
-// =========================
-// DELETE PROJECT
-// =========================
+/* ======================================
+   DELETE PROJECT
+====================================== */
 
-async function deleteProject(id){
+async function deleteProject(
+id
+){
 
-  if(!confirm(
-    'Delete project?'
-  )) return
+    if(
+        !confirm(
+        "Delete Project?"
+        )
+    ) return;
 
-  try{
+    try{
 
-    showLoader()
+        await api(
+            `/api/projects/${id}`,
+            "DELETE"
+        );
 
-    await fetch(
+        toast(
+            "Project Deleted"
+        );
 
-      `${API}/api/projects/${id}`,
+        loadProjects();
 
-      {
+    }catch(err){
 
-        method:'DELETE',
+        console.error(err);
+    }
+}
 
-        headers:authHeaders()
-      }
+/* ======================================
+   GENERATE VIDEO
+====================================== */
+
+async function generateVideo(
+id
+){
+
+    try{
+
+        toast(
+            "Generating..."
+        );
+
+        const data =
+        await api(
+            `/api/projects/${id}/generate`,
+            "POST"
+        );
+
+        toast(
+            "Video Uploaded"
+        );
+
+        console.log(data);
+
+        loadProjects();
+
+    }catch(err){
+
+        console.error(err);
+    }
+}
+
+/* ======================================
+   ANALYTICS
+====================================== */
+
+async function loadAnalytics(
+projectId
+){
+
+    try{
+
+        const data =
+        await api(
+            `/api/analytics/${projectId}`
+        );
+
+        const analytics =
+        data.analytics;
+
+        document
+        .getElementById(
+            "totalUploads"
+        ).textContent =
+        analytics.totalUploads;
+
+        return analytics;
+
+    }catch(err){
+
+        console.error(err);
+    }
+}
+
+/* ======================================
+   DASHBOARD
+====================================== */
+
+function updateDashboard(){
+
+    const totalProjects =
+    App.projects.length;
+
+    const activeProjects =
+    App.projects.filter(
+    p=>
+    p.status==="active"
+    ).length;
+
+    document
+    .getElementById(
+        "totalProjects"
+    ).textContent =
+    totalProjects;
+
+    document
+    .getElementById(
+        "activeProjects"
+    ).textContent =
+    activeProjects;
+}
+/* ======================================
+   PROJECT FORM STATE
+====================================== */
+
+let editingProjectId = null;
+
+const DEFAULT_PROJECT = {
+
+    name: "",
+
+    niche: "quote",
+
+    topics: [],
+
+    theme: "gold-islamic",
+
+    privacy: "public",
+
+    uploadTime: "18:00",
+
+    timezone: "Asia/Kolkata",
+
+    reelsPerDay: 1,
+
+    episodeEnabled: false,
+
+    channelId: ""
+};
+
+/* ======================================
+   CREATE PROJECT
+====================================== */
+
+function openCreateProject(){
+
+    editingProjectId = null;
+
+    fillProjectForm(
+        DEFAULT_PROJECT
+    );
+
+    document
+    .getElementById(
+        "projectModal"
     )
-
-    await loadProjects()
-
-  }catch(err){
-
-    alert(err.message)
-
-  }finally{
-
-    hideLoader()
-  }
+    .classList
+    .add("show");
 }
 
-// =========================
-// EDIT PROJECT
-// =========================
+/* ======================================
+   EDIT PROJECT
+====================================== */
 
-async function editProject(id){
+function editProject(id){
 
-  const name =
-  prompt('New Name')
+    const project =
+    App.projects.find(
+    p=>p._id===id
+    );
 
-  if(!name) return
+    if(!project)
+    return;
 
-  try{
+    editingProjectId = id;
 
-    showLoader()
+    fillProjectForm(
+        project
+    );
 
-    await fetch(
-
-      `${API}/api/projects/${id}`,
-
-      {
-
-        method:'PUT',
-
-        headers:authHeaders(),
-
-        body:JSON.stringify({
-          name
-        })
-      }
+    document
+    .getElementById(
+        "projectModal"
     )
-
-    await loadProjects()
-
-  }catch(err){
-
-    alert(err.message)
-
-  }finally{
-
-    hideLoader()
-  }
+    .classList
+    .add("show");
 }
 
-// =========================
-// LOGOUT
-// =========================
+/* ======================================
+   CLOSE MODAL
+====================================== */
 
-document.getElementById(
-  'logoutBtn'
-).onclick=()=>{
+function closeProjectModal(){
 
-  localStorage.removeItem(
-    'token'
-  )
-
-  location.reload()
+    document
+    .getElementById(
+        "projectModal"
+    )
+    .classList
+    .remove("show");
 }
 
-// =========================
-// INIT
-// =========================
+/* ======================================
+   FILL FORM
+====================================== */
 
-async function initDashboard(){
+function fillProjectForm(
+project
+){
 
-  showDashboard()
+    $("#projectName").value =
+    project.name || "";
 
-  await loadChannels()
+    $("#projectTheme").value =
+    project.theme || "";
 
-  await loadProjects()
+    $("#projectNiche").value =
+    project.niche || "";
 
-  await handleOAuth()
+    $("#uploadTime").value =
+    project.uploadTime || "";
+
+    $("#timezone").value =
+    project.timezone || "";
+
+    $("#privacy").value =
+    project.privacy || "";
+
+    $("#reelsPerDay").value =
+    project.reelsPerDay || 1;
+
+    $("#reelsCount").innerText =
+    project.reelsPerDay || 1;
+
+    $("#episodeEnabled").checked =
+    project.episodeEnabled || false;
+
+    if(project.channelId){
+
+        const id =
+        project.channelId._id ||
+        project.channelId;
+
+        $("#channelSelect").value =
+        id;
+    }
+
+    if(project.topics){
+
+        $("#topicsInput").value =
+        project.topics.join(",");
+    }
 }
 
-if(token()){
+/* ======================================
+   CHANNEL DROPDOWN
+====================================== */
 
-  initDashboard()
+function populateChannelDropdown(){
+
+    const select =
+    $("#channelSelect");
+
+    if(!select)
+    return;
+
+    select.innerHTML = "";
+
+    App.channels.forEach(
+    channel=>{
+
+        select.innerHTML +=
+        `
+        <option
+        value="${channel._id}">
+        ${channel.channelTitle}
+        </option>
+        `;
+    });
 }
+
+/* ======================================
+   SAVE PROJECT
+====================================== */
+
+async function saveProject(){
+
+    const payload = {
+
+        name:
+        $("#projectName")
+        .value
+        .trim(),
+
+        niche:
+        $("#projectNiche")
+        .value,
+
+        theme:
+        $("#projectTheme")
+        .value,
+
+        privacy:
+        $("#privacy")
+        .value,
+
+        uploadTime:
+        $("#uploadTime")
+        .value,
+
+        timezone:
+        $("#timezone")
+        .value,
+
+        reelsPerDay:
+        Number(
+            $("#reelsPerDay")
+            .value
+        ),
+
+        episodeEnabled:
+        $("#episodeEnabled")
+        .checked,
+
+        channelId:
+        $("#channelSelect")
+        .value,
+
+        topics:
+        $("#topicsInput")
+        .value
+        .split(",")
+        .map(x=>x.trim())
+        .filter(Boolean)
+    };
+
+    if(!payload.name){
+
+        return toast(
+            "Project name required",
+            "error"
+        );
+    }
+
+    if(!payload.channelId){
+
+        return toast(
+            "Select channel",
+            "error"
+        );
+    }
+
+    try{
+
+        if(editingProjectId){
+
+            await api(
+
+                `/api/projects/${editingProjectId}`,
+
+                "PUT",
+
+                payload
+            );
+
+            toast(
+                "Project Updated"
+            );
+
+        }else{
+
+            await api(
+
+                "/api/projects",
+
+                "POST",
+
+                payload
+            );
+
+            toast(
+                "Project Created"
+            );
+        }
+
+        closeProjectModal();
+
+        loadProjects();
+
+    }catch(err){
+
+        console.error(err);
+    }
+}
+
+/* ======================================
+   REELS SLIDER
+====================================== */
+
+function bindSlider(){
+
+    const slider =
+    $("#reelsPerDay");
+
+    const output =
+    $("#reelsCount");
+
+    if(!slider)
+    return;
+
+    slider.addEventListener(
+        "input",
+        ()=>{
+
+            output.innerText =
+            slider.value;
+        }
+    );
+}
+
+/* ======================================
+   THEME PREVIEW
+====================================== */
+
+function bindThemePreview(){
+
+    const theme =
+    $("#projectTheme");
+
+    const preview =
+    $("#themePreview");
+
+    if(
+        !theme ||
+        !preview
+    ) return;
+
+    theme.addEventListener(
+        "change",
+        ()=>{
+
+            preview.className =
+            "";
+
+            preview.classList.add(
+
+                "theme-preview",
+
+                theme.value
+            );
+        }
+    );
+}
+
+/* ======================================
+   HISTORY
+====================================== */
+
+async function openHistory(
+projectId
+){
+
+    try{
+
+        showPage(
+            "historyPage"
+        );
+
+        const data =
+        await api(
+            `/api/projects/${projectId}/history`
+        );
+
+        const uploads =
+        data.uploads || [];
+
+        const table =
+        document
+        .getElementById(
+            "historyTable"
+        );
+
+        table.innerHTML = "";
+
+        uploads.forEach(
+        upload=>{
+
+            table.innerHTML +=
+            `
+            <tr>
+
+                <td>
+                ${upload.title}
+                </td>
+
+                <td>
+                ${new Date(
+                    upload.createdAt
+                ).toLocaleString()}
+                </td>
+
+                <td>
+
+                    <a
+                    href="${upload.videoUrl}"
+                    target="_blank">
+
+                    View
+
+                    </a>
+
+                </td>
+
+            </tr>
+            `;
+        });
+
+    }catch(err){
+
+        console.error(err);
+    }
+}
+
+/* ======================================
+   SETTINGS
+====================================== */
+
+async function loadSettings(){
+
+    try{
+
+        const data =
+        await api(
+            "/api/settings"
+        );
+
+        App.settings =
+        data.settings;
+
+        renderSettings();
+
+    }catch(err){
+
+        console.error(err);
+    }
+}
+
+function renderSettings(){
+
+    if(!App.settings)
+    return;
+
+    const s =
+    App.settings;
+
+    const brand =
+    document.getElementById(
+        "brandName"
+    );
+
+    const series =
+    document.getElementById(
+        "seriesName"
+    );
+
+    const handle =
+    document.getElementById(
+        "channelHandle"
+    );
+
+    const description =
+    document.getElementById(
+        "descriptionTemplate"
+    );
+
+    if(brand)
+    brand.value =
+    s.brandName || "";
+
+    if(series)
+    series.value =
+    s.seriesName || "";
+
+    if(handle)
+    handle.value =
+    s.channelHandle || "";
+
+    if(description)
+    description.value =
+    s.description || "";
+}
+
+async function saveSettings(){
+
+    try{
+
+        const payload = {
+
+            brandName:
+            document
+            .getElementById(
+                "brandName"
+            ).value,
+
+            seriesName:
+            document
+            .getElementById(
+                "seriesName"
+            ).value,
+
+            channelHandle:
+            document
+            .getElementById(
+                "channelHandle"
+            ).value,
+
+            description:
+            document
+            .getElementById(
+                "descriptionTemplate"
+            ).value
+        };
+
+        await api(
+            "/api/settings",
+            "POST",
+            payload
+        );
+
+        toast(
+            "Settings Saved"
+        );
+
+        loadSettings();
+
+    }catch(err){
+
+        console.error(err);
+    }
+}
+
+/* ======================================
+   AUTO LOGIN
+====================================== */
+
+async function checkLogin(){
+
+    if(!App.token){
+
+        showPage(
+            "loginPage"
+        );
+
+        return;
+    }
+
+    try{
+
+        await bootstrap();
+
+    }catch(err){
+
+        clearToken();
+
+        showPage(
+            "loginPage"
+        );
+    }
+}
+
+/* ======================================
+   EVENT BINDINGS
+====================================== */
+
+function bindEvents(){
+
+    const loginBtn =
+    document.getElementById(
+        "loginBtn"
+    );
+
+    if(loginBtn){
+
+        loginBtn.addEventListener(
+            "click",
+            login
+        );
+    }
+
+    const signupBtn =
+    document.getElementById(
+        "signupBtn"
+    );
+
+    if(signupBtn){
+
+        signupBtn.addEventListener(
+            "click",
+            signup
+        );
+    }
+
+    const youtubeBtn =
+    document.getElementById(
+        "youtubeConnectBtn"
+    );
+
+    if(youtubeBtn){
+
+        youtubeBtn.addEventListener(
+            "click",
+            connectYoutube
+        );
+    }
+
+    const logoutBtn =
+    document.getElementById(
+        "logoutBtn"
+    );
+
+    if(logoutBtn){
+
+        logoutBtn.addEventListener(
+            "click",
+            logout
+        );
+    }
+
+    const saveBtn =
+    document.getElementById(
+        "saveSettingsBtn"
+    );
+
+    if(saveBtn){
+
+        saveBtn.addEventListener(
+            "click",
+            saveSettings
+        );
+    }
+
+    const createBtn =
+    document.getElementById(
+        "createProjectButton"
+    );
+
+    if(createBtn){
+
+        createBtn.addEventListener(
+            "click",
+            openCreateProject
+        );
+    }
+
+    const modalSave =
+    document.getElementById(
+        "saveProjectBtn"
+    );
+
+    if(modalSave){
+
+        modalSave.addEventListener(
+            "click",
+            saveProject
+        );
+    }
+
+    const modalClose =
+    document.getElementById(
+        "closeProjectModal"
+    );
+
+    if(modalClose){
+
+        modalClose.addEventListener(
+            "click",
+            closeProjectModal
+        );
+    }
+}
+
+/* ======================================
+   STARTUP
+====================================== */
+
+async function start(){
+
+    bindNavigation();
+
+    bindEvents();
+
+    bindSlider();
+
+    bindThemePreview();
+
+    await handleOAuthCallback();
+
+    await checkLogin();
+}
+
+/* ======================================
+   DOM READY
+====================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    start
+);
+
+/* ======================================
+   GLOBAL EXPORTS
+====================================== */
+
+window.login =
+login;
+
+window.signup =
+signup;
+
+window.logout =
+logout;
+
+window.saveProject =
+saveProject;
+
+window.editProject =
+editProject;
+
+window.deleteProject =
+deleteProject;
+
+window.openHistory =
+openHistory;
+
+window.generateVideo =
+generateVideo;
+
+window.connectYoutube =
+connectYoutube;
+
+window.saveSettings =
+saveSettings;
+
+window.openCreateProject =
+openCreateProject;
+
+window.closeProjectModal =
+closeProjectModal;
+
+/* ======================================
+   OPTIONAL IMPROVEMENTS
+====================================== */
+
+// Auto refresh dashboard every 60s
+
+setInterval(()=>{
+
+    if(App.token){
+
+        loadProjects();
+
+        loadChannels();
+    }
+
+},60000);
+
+// Enter key login
+
+document.addEventListener(
+"keydown",
+e=>{
+
+    if(
+        e.key==="Enter"
+    ){
+
+        const loginPage =
+        document.getElementById(
+            "loginPage"
+        );
+
+        if(
+            loginPage &&
+            !loginPage.classList.contains(
+                "hidden"
+            )
+        ){
+
+            login();
+        }
+    }
+});
