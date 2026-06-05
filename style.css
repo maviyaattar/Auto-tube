@@ -626,3 +626,467 @@ grid-template-columns:1fr;
 }
 
 }
+/* =========================
+   MODAL
+========================= */
+
+.modal{
+
+position:fixed;
+
+top:0;
+left:0;
+
+width:100%;
+height:100%;
+
+background:rgba(0,0,0,.75);
+
+display:none;
+
+align-items:center;
+justify-content:center;
+
+z-index:9999;
+
+padding:20px;
+
+}
+
+.modal.show{
+
+display:flex;
+
+}
+
+.modal-content{
+
+width:100%;
+
+max-width:700px;
+
+background:var(--card);
+
+border:1px solid var(--border);
+
+border-radius:20px;
+
+padding:25px;
+
+max-height:90vh;
+
+overflow-y:auto;
+
+}
+
+.modal-header{
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+margin-bottom:20px;
+
+}
+
+.modal-header h2{
+
+font-size:24px;
+
+}
+
+.modal-header button{
+
+width:40px;
+height:40px;
+
+border:none;
+
+border-radius:10px;
+
+cursor:pointer;
+
+background:#222736;
+
+color:white;
+
+font-size:18px;
+
+}
+
+.form-grid{
+
+display:flex;
+
+flex-direction:column;
+
+gap:14px;
+
+}
+
+.form-grid input,
+.form-grid select,
+.form-grid textarea{
+
+width:100%;
+
+padding:14px;
+
+background:#0e1017;
+
+border:1px solid var(--border);
+
+border-radius:12px;
+
+color:white;
+
+}
+
+.form-grid label{
+
+font-size:14px;
+
+color:var(--muted);
+
+}
+
+.form-grid button{
+
+background:var(--primary);
+
+color:white;
+
+border:none;
+
+padding:14px;
+
+border-radius:12px;
+
+cursor:pointer;
+
+font-weight:700;
+
+}
+
+/* =========================
+   THEME PREVIEW
+========================= */
+
+.theme-preview{
+
+height:120px;
+
+border-radius:14px;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+font-weight:700;
+
+border:1px solid var(--border);
+
+background:#1f2937;
+
+color:white;
+
+}
+
+.theme-preview.gold-islamic{
+
+background:#6b4f00;
+
+}
+
+.theme-preview.emerald-modern{
+
+background:#065f46;
+
+}
+
+.theme-preview.sapphire-deep{
+
+background:#1e3a8a;
+
+}
+
+.theme-preview.rose-elegant{
+
+background:#881337;
+
+}
+
+.theme-preview.purple-mystic{
+
+background:#581c87;
+
+}
+
+.theme-preview.amber-warm{
+
+background:#92400e;
+
+}
+
+.theme-preview.teal-serene{
+
+background:#115e59;
+
+}
+
+/* =========================
+   CHANNELS
+========================= */
+
+.channel-card{
+
+display:flex;
+
+align-items:center;
+
+gap:15px;
+
+padding:15px;
+
+background:#10131c;
+
+border:1px solid var(--border);
+
+border-radius:14px;
+
+margin-top:12px;
+
+}
+
+.channel-card img{
+
+width:55px;
+
+height:55px;
+
+border-radius:50%;
+
+object-fit:cover;
+
+}
+
+.channel-card h4{
+
+margin-bottom:4px;
+
+}
+
+.channel-card p{
+
+font-size:13px;
+
+color:var(--muted);
+
+}
+
+.channel-card button{
+
+margin-left:auto;
+
+background:#ef4444;
+
+color:white;
+
+border:none;
+
+padding:10px 14px;
+
+border-radius:10px;
+
+cursor:pointer;
+
+}
+
+/* =========================
+   TOAST
+========================= */
+
+.toast{
+
+position:fixed;
+
+top:20px;
+
+right:-400px;
+
+padding:16px 20px;
+
+border-radius:12px;
+
+background:#22c55e;
+
+color:white;
+
+font-weight:600;
+
+z-index:10000;
+
+transition:.4s;
+
+box-shadow:
+0 10px 30px rgba(0,0,0,.3);
+
+}
+
+.toast.error{
+
+background:#ef4444;
+
+}
+
+.toast.show{
+
+right:20px;
+
+}
+
+/* =========================
+   LOADER
+========================= */
+
+#globalLoader{
+
+position:fixed;
+
+top:0;
+left:0;
+
+width:100%;
+height:100%;
+
+background:rgba(0,0,0,.6);
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+z-index:99999;
+
+}
+
+.loader{
+
+width:60px;
+
+height:60px;
+
+border:5px solid #333;
+
+border-top:5px solid var(--primary);
+
+border-radius:50%;
+
+animation:spin 1s linear infinite;
+
+}
+
+@keyframes spin{
+
+0%{
+transform:rotate(0deg);
+}
+
+100%{
+transform:rotate(360deg);
+}
+
+}
+
+/* =========================
+   STATUS BADGES
+========================= */
+
+.status{
+
+padding:6px 12px;
+
+border-radius:999px;
+
+font-size:12px;
+
+font-weight:700;
+
+text-transform:uppercase;
+
+}
+
+.status.active{
+
+background:#16a34a;
+
+color:white;
+
+}
+
+.status.paused{
+
+background:#eab308;
+
+color:black;
+
+}
+
+.status.archived{
+
+background:#6b7280;
+
+color:white;
+
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:768px){
+
+.modal-content{
+
+padding:18px;
+
+}
+
+.channel-card{
+
+flex-direction:column;
+
+align-items:flex-start;
+
+}
+
+.channel-card button{
+
+margin-left:0;
+
+width:100%;
+
+}
+
+.toast{
+
+left:15px;
+right:15px;
+
+top:15px;
+
+}
+
+.toast.show{
+
+left:15px;
+right:15px;
+
+}
+
+}
