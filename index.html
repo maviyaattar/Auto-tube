@@ -4,7 +4,9 @@
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
 
 <title>AutoTube AI</title>
 
@@ -22,38 +24,60 @@
 
     <aside class="sidebar">
 
-        <div class="logo">
+        <div>
 
-            <div class="logo-circle"></div>
+            <div class="logo">
 
-            <h2>AutoTube AI</h2>
+                <div class="logo-circle"></div>
+
+                <h2>AutoTube AI</h2>
+
+            </div>
+
+            <nav>
+
+                <button
+                class="nav-btn active"
+                data-page="dashboard">
+
+                Dashboard
+
+                </button>
+
+                <button
+                class="nav-btn"
+                data-page="projects">
+
+                Projects
+
+                </button>
+
+                <button
+                class="nav-btn"
+                data-page="history">
+
+                Upload History
+
+                </button>
+
+                <button
+                class="nav-btn"
+                data-page="settings">
+
+                Settings
+
+                </button>
+
+            </nav>
 
         </div>
-
-        <nav>
-
-            <button class="nav-btn active" data-page="dashboard">
-                Dashboard
-            </button>
-
-            <button class="nav-btn" data-page="projects">
-                Projects
-            </button>
-
-            <button class="nav-btn" data-page="history">
-                Upload History
-            </button>
-
-            <button class="nav-btn" data-page="settings">
-                Settings
-            </button>
-
-        </nav>
 
         <div class="sidebar-footer">
 
             <button id="logoutBtn">
+
                 Logout
+
             </button>
 
         </div>
@@ -66,38 +90,55 @@
 
         <!-- LOGIN -->
 
-        <section id="loginPage" class="page">
+        <section
+        id="loginPage"
+        class="page">
 
             <div class="auth-box">
 
-                <h1>AutoTube AI</h1>
+                <h1>
+
+                    AutoTube AI
+
+                </h1>
 
                 <p>
-                    Create AI Shorts. Upload Automatically.
+
+                    Create AI Shorts.
+                    Upload Automatically.
+
                 </p>
 
                 <input
-                    type="email"
-                    id="email"
-                    placeholder="Email Address"
-                >
+                type="email"
+                id="email"
+                placeholder="Email">
 
                 <input
-                    type="password"
-                    id="password"
-                    placeholder="Password"
-                >
+                type="password"
+                id="password"
+                placeholder="Password">
 
-                <button id="loginBtn">
-                    Login
+                <button
+                id="loginBtn">
+
+                Login
+
                 </button>
 
-                <button id="signupBtn" class="secondary">
-                    Create Account
+                <button
+                id="signupBtn"
+                class="secondary">
+
+                Signup
+
                 </button>
 
-                <button id="youtubeConnectBtn">
-                    Connect YouTube
+                <button
+                id="youtubeConnectBtn">
+
+                Connect YouTube
+
                 </button>
 
             </div>
@@ -106,23 +147,32 @@
 
         <!-- DASHBOARD -->
 
-        <section id="dashboardPage" class="page hidden">
+        <section
+        id="dashboardPage"
+        class="page hidden">
 
             <div class="page-header">
 
                 <div>
 
-                    <h1>Dashboard</h1>
+                    <h1>
+
+                        Dashboard
+
+                    </h1>
 
                     <p>
+
                         Overview of your automation
+
                     </p>
 
                 </div>
 
-                <button id="newProjectBtn">
+                <button
+                id="createProjectButton">
 
-                    + New Project
+                + New Project
 
                 </button>
 
@@ -132,40 +182,68 @@
 
                 <div class="stat-card">
 
-                    <h3>Total Uploads</h3>
+                    <h3>
 
-                    <span id="totalUploads">
-                        0
+                    Total Uploads
+
+                    </h3>
+
+                    <span
+                    id="totalUploads">
+
+                    0
+
                     </span>
 
                 </div>
 
                 <div class="stat-card">
 
-                    <h3>Projects</h3>
+                    <h3>
 
-                    <span id="totalProjects">
-                        0
+                    Projects
+
+                    </h3>
+
+                    <span
+                    id="totalProjects">
+
+                    0
+
                     </span>
 
                 </div>
 
                 <div class="stat-card">
 
-                    <h3>Channels</h3>
+                    <h3>
 
-                    <span id="totalChannels">
-                        0
+                    Channels
+
+                    </h3>
+
+                    <span
+                    id="totalChannels">
+
+                    0
+
                     </span>
 
                 </div>
 
                 <div class="stat-card">
 
-                    <h3>Active</h3>
+                    <h3>
 
-                    <span id="activeProjects">
-                        0
+                    Active
+
+                    </h3>
+
+                    <span
+                    id="activeProjects">
+
+                    0
+
                     </span>
 
                 </div>
@@ -180,7 +258,8 @@
 
                 </div>
 
-                <div id="dashboardProjects">
+                <div
+                id="dashboardProjects">
 
                 </div>
 
@@ -189,21 +268,29 @@
         </section>
         <!-- PROJECTS -->
 
-        <section id="projectsPage" class="page hidden">
+        <section
+        id="projectsPage"
+        class="page hidden">
 
             <div class="page-header">
 
-                <h1>Projects</h1>
+                <h1>
 
-                <button id="createProjectButton">
+                    Projects
 
-                    Create Project
+                </h1>
+
+                <button
+                onclick="openCreateProject()">
+
+                Create Project
 
                 </button>
 
             </div>
 
-            <div id="projectContainer">
+            <div
+            id="projectContainer">
 
             </div>
 
@@ -211,9 +298,19 @@
 
         <!-- HISTORY -->
 
-        <section id="historyPage" class="page hidden">
+        <section
+        id="historyPage"
+        class="page hidden">
 
-            <h1>Upload History</h1>
+            <div class="page-header">
+
+                <h1>
+
+                    Upload History
+
+                </h1>
+
+            </div>
 
             <div class="table-container">
 
@@ -221,19 +318,26 @@
 
                     <thead>
 
-                    <tr>
+                        <tr>
 
-                        <th>Title</th>
+                            <th>
+                                Title
+                            </th>
 
-                        <th>Date</th>
+                            <th>
+                                Date
+                            </th>
 
-                        <th>Video</th>
+                            <th>
+                                Video
+                            </th>
 
-                    </tr>
+                        </tr>
 
                     </thead>
 
-                    <tbody id="historyTable">
+                    <tbody
+                    id="historyTable">
 
                     </tbody>
 
@@ -245,37 +349,61 @@
 
         <!-- SETTINGS -->
 
-        <section id="settingsPage" class="page hidden">
+        <section
+        id="settingsPage"
+        class="page hidden">
 
-            <h1>Settings</h1>
+            <div class="page-header">
+
+                <h1>
+
+                    Settings
+
+                </h1>
+
+            </div>
 
             <div class="settings-grid">
 
                 <input
-                    id="brandName"
-                    placeholder="Brand Name"
-                >
+                id="brandName"
+                placeholder="Brand Name">
 
                 <input
-                    id="seriesName"
-                    placeholder="Series Name"
-                >
+                id="seriesName"
+                placeholder="Series Name">
 
                 <input
-                    id="channelHandle"
-                    placeholder="@channel"
-                >
+                id="channelHandle"
+                placeholder="@channelhandle">
 
                 <textarea
-                    id="descriptionTemplate"
-                    placeholder="Description Template"
-                ></textarea>
+                id="descriptionTemplate"
+                placeholder="Description Template"></textarea>
 
-                <button id="saveSettingsBtn">
+                <button
+                id="saveSettingsBtn">
 
-                    Save Settings
+                Save Settings
 
                 </button>
+
+            </div>
+
+            <div
+            class="dashboard-section">
+
+                <div
+                class="section-title">
+
+                Connected Channels
+
+                </div>
+
+                <div
+                id="connectedChannels">
+
+                </div>
 
             </div>
 
@@ -285,7 +413,213 @@
 
 </div>
 
+<!-- PROJECT MODAL -->
+
+<div
+id="projectModal"
+class="modal">
+
+    <div
+    class="modal-content">
+
+        <div
+        class="modal-header">
+
+            <h2>
+
+                Create Project
+
+            </h2>
+
+            <button
+            id="closeProjectModal">
+
+            ✕
+
+            </button>
+
+        </div>
+
+        <div
+        class="form-grid">
+
+            <input
+            id="projectName"
+            placeholder="Project Name">
+
+            <select
+            id="projectNiche">
+
+                <option value="quote">
+                    Quote
+                </option>
+
+                <option value="quiz">
+                    Quiz
+                </option>
+
+                <option value="islamic">
+                    Islamic
+                </option>
+
+                <option value="motivational">
+                    Motivational
+                </option>
+
+                <option value="gk">
+                    GK
+                </option>
+
+                <option value="facts">
+                    Facts
+                </option>
+
+                <option value="trending">
+                    Trending
+                </option>
+
+            </select>
+
+            <select
+            id="projectTheme">
+
+                <option value="gold-islamic">
+                    Gold Islamic
+                </option>
+
+                <option value="emerald-modern">
+                    Emerald Modern
+                </option>
+
+                <option value="sapphire-deep">
+                    Sapphire Deep
+                </option>
+
+                <option value="rose-elegant">
+                    Rose Elegant
+                </option>
+
+                <option value="purple-mystic">
+                    Purple Mystic
+                </option>
+
+                <option value="amber-warm">
+                    Amber Warm
+                </option>
+
+                <option value="teal-serene">
+                    Teal Serene
+                </option>
+
+            </select>
+
+            <div
+            id="themePreview"
+            class="theme-preview">
+
+                Theme Preview
+
+            </div>
+
+            <input
+            id="topicsInput"
+            placeholder="islam,quran,motivation">
+
+            <input
+            type="time"
+            id="uploadTime">
+
+            <select
+            id="timezone">
+
+                <option value="Asia/Kolkata">
+                    Asia/Kolkata
+                </option>
+
+                <option value="UTC">
+                    UTC
+                </option>
+
+            </select>
+
+            <select
+            id="channelSelect">
+
+            </select>
+
+            <select
+            id="privacy">
+
+                <option value="public">
+                    Public
+                </option>
+
+                <option value="unlisted">
+                    Unlisted
+                </option>
+
+                <option value="private">
+                    Private
+                </option>
+
+            </select>
+
+            <div>
+
+                <label>
+
+                    Reels Per Day
+
+                </label>
+
+                <input
+                type="range"
+                id="reelsPerDay"
+                min="1"
+                max="7"
+                value="1">
+
+                <span
+                id="reelsCount">
+
+                1
+
+                </span>
+
+            </div>
+
+            <label>
+
+                <input
+                type="checkbox"
+                id="episodeEnabled">
+
+                Episode Series
+
+            </label>
+
+            <button
+            id="saveProjectBtn">
+
+            Save Project
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- TOAST CONTAINER -->
+
+<div
+id="toastContainer">
+
+</div>
+
 <script src="script.js"></script>
 
 </body>
+
 </html>
